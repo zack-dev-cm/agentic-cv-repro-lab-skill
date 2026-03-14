@@ -18,6 +18,7 @@ Source:
 - internal hostnames or VM names
 - absolute local filesystem paths
 - private dataset slugs or customer identifiers
+- GitHub topics, ClawHub tags, changelog text, or release notes that expose customer names or private infra terms
 - command examples that embed credentials in flags
 
 ## OpenClaw-specific safety rules
@@ -39,7 +40,8 @@ Source:
 5. Search for token-like strings and secret-shaped env vars.
 6. Ensure bundled scripts do not combine env harvesting with network exfiltration.
 7. Ensure the skill uses `{baseDir}` for bundled file references.
-8. If private specialization is still needed, keep it in a local override skill instead of the public bundle.
+8. Review publish metadata, tags, topics, and changelog text for internal names or customer terms.
+9. If private specialization is still needed, keep it in a local override skill instead of the public bundle.
 
 ## Practical audit commands
 

@@ -2,7 +2,7 @@
 name: data-science-cv-repro-lab
 description: Run reproducible, agentic computer-vision experiments end to end. Use when the task involves CV training or inference debugging, OpenClaw or browser-driven Colab/Kaggle workflows, preprocessing and augmentation audits, checkpoint comparisons, benchmark-gated deployment decisions, GPU or VM training monitoring, or turning an ad hoc DS/CV workflow into a repeatable playbook.
 homepage: https://github.com/zack-dev-cm/agentic-cv-repro-lab-skill
-user-invocable: false
+user-invocable: true
 metadata: {"openclaw":{"homepage":"https://github.com/zack-dev-cm/agentic-cv-repro-lab-skill","skillKey":"data-science-cv-repro-lab","requires":{"anyBins":["python3","python"]}}}
 ---
 

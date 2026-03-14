@@ -72,6 +72,35 @@ rsync -a skill/data-science-cv-repro-lab/ "$CODEX_HOME/skills/data-science-cv-re
 - `init_cv_artifact_manifest.py`: capture the artifact bundle contents for Colab, Kaggle, or VM export pulls
 - `init_cv_vm_bootstrap_manifest.py`: capture the launch metadata for long VM or cluster runs
 
+## Public Positioning
+
+This bundle is meant to be public and reusable. The OpenClaw skill is exposed as a user-invocable command, so it can be discovered both by model routing and by explicit user invocation.
+
+Recommended GitHub repository topics:
+
+- `openclaw`
+- `openclaw-skill`
+- `computer-vision`
+- `data-science`
+- `reproducibility`
+- `google-colab`
+- `kaggle`
+- `gpu-training`
+- `mlops`
+- `agentic-workflows`
+
+Recommended ClawHub tags:
+
+- `latest`
+- `computer-vision`
+- `data-science`
+- `reproducibility`
+- `colab`
+- `kaggle`
+- `gpu-training`
+- `mlops`
+- `agentic-workflows`
+
 ## OpenClaw And ClawHub Publication
 
 OpenClaw skill format and gating details:
@@ -90,6 +119,14 @@ ClawHub is public by default. Before publishing, keep the bundle free of:
 
 If you need a private specialization for one company or repo, keep it as a local override in `~/.openclaw/skills` or `<workspace>/skills`, not in the public bundle.
 
+Recommended release checklist:
+
+1. Run the publication audit commands from `references/publication-security.md`.
+2. Confirm the skill still exposes the public-friendly slash command and UI metadata.
+3. Apply the GitHub repository topics listed above.
+4. Publish to ClawHub with the tag set listed above.
+5. Review the changelog text one more time for customer names, private infra labels, or leaked URLs.
+
 Recommended publish flow:
 
 ```bash
@@ -98,9 +135,9 @@ export CLAWHUB_DISABLE_TELEMETRY=1
 clawhub publish ./skill/data-science-cv-repro-lab \
   --slug data-science-cv-repro-lab \
   --name "Agentic CV Repro Lab" \
-  --version 1.4.0 \
-  --changelog "Add artifact-manifest and VM-bootstrap helpers for full train-management coverage" \
-  --tags latest,computer-vision,reproducibility
+  --version 1.5.0 \
+  --changelog "Enable public slash-command invocation and tighten release-safe publication guidance" \
+  --tags latest,computer-vision,data-science,reproducibility,colab,kaggle,gpu-training,mlops,agentic-workflows
 ```
 
 ## Why This Exists
