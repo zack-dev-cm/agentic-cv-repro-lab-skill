@@ -40,6 +40,7 @@ Turn CV work into a reproducible decision loop:
    - Use `python3 {baseDir}/scripts/init_cv_dataset_manifest.py --out <json> --dataset-id <id>`.
    - Use `python3 {baseDir}/scripts/init_cv_run_card.py --out <json> --candidate-id <id> --task-id <task> --baseline-id <baseline>`.
    - If a browser lane matters, use `python3 {baseDir}/scripts/init_cv_browser_run_card.py --out <json> --target-url <url>`.
+   - If a long VM run is involved, use `python3 {baseDir}/scripts/init_cv_vm_bootstrap_manifest.py --out <json> --output-root <run_root> --model-family <name> --command python train.py --epochs 40`.
 
 3. Capture the current state immediately.
    - Use `python3 {baseDir}/scripts/capture_cv_run_context.py --repo-root <repo> --out <json> --markdown-out <md> --path <dataset_or_checkpoint> --param key=value`.
@@ -102,6 +103,7 @@ Turn CV work into a reproducible decision loop:
 - Verify GPU readiness from inside the notebook before the long run.
 - Use a smoke cell that proves the runtime, imports, and data mounts all work.
 - Export all required artifacts to one stable bundle directory.
+- Create an artifact manifest for that export bundle before pulling it back locally.
 - Pull the artifact manifest plus at least one preview image back to local storage.
 
 ### Custom VM and cluster rules
@@ -168,3 +170,7 @@ Read only the reference that matches the task:
   - Create a sanitized browser evidence record for Colab, Kaggle, or other notebook UI runs.
 - `scripts/render_cv_run_summary.py`
   - Render a concise markdown release summary from the machine-readable run card.
+- `scripts/init_cv_artifact_manifest.py`
+  - Create a machine-readable export-bundle manifest for Colab, Kaggle, or VM artifact pulls.
+- `scripts/init_cv_vm_bootstrap_manifest.py`
+  - Create a machine-readable bootstrap manifest for long VM or cluster training runs.

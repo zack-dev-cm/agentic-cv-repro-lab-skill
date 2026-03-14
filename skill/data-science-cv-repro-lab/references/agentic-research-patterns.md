@@ -115,3 +115,5 @@ When browser execution matters, pair it with:
 - `init_cv_browser_run_card.py` for notebook or browser evidence
 - `init_cv_dataset_manifest.py` for the shared dataset identity
 - `render_cv_run_summary.py` for the markdown summary derived from the run card
+- `init_cv_artifact_manifest.py` for the export bundle contents
+- `init_cv_vm_bootstrap_manifest.py` for long-run VM launch metadata

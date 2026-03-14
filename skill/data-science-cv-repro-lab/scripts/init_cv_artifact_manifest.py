@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""Create a machine-readable artifact manifest for a CV export bundle."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+
+def sha256_file(path: Path, block_size: int = 1024 * 1024) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        while True:
+            chunk = fh.read(block_size)
+            if not chunk:
+                break
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def path_record(path: Path, role: str, hash_files: bool) -> dict[str, object]:
+    record: dict[str, object] = {
+        "role": role,
+        "path": str(path),
+        "exists": path.exists(),
+    }
+    if not path.exists():
+        return record
+    stat = path.stat()
+    record["type"] = "dir" if path.is_dir() else "file"
+    record["size_bytes"] = stat.st_size
+    record["mtime_utc"] = datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat()
+    if path.is_dir():
+        record["child_count"] = sum(1 for _ in path.iterdir())
+        record["recursive_file_count"] = sum(1 for child in path.rglob("*") if child.is_file())
+    elif hash_files:
+        record["sha256"] = sha256_file(path)
+    return record
+
+
+def parse_item(item: str) -> tuple[str, Path]:
+    if "=" not in item:
+        raise SystemExit(f"invalid --item value: {item!r}, expected role=path")
+    role, raw_path = item.split("=", 1)
+    role = role.strip()
+    raw_path = raw_path.strip()
+    if not role or not raw_path:
+        raise SystemExit(f"invalid --item value: {item!r}, expected role=path")
+    return role, Path(raw_path).expanduser().resolve()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", required=True, help="Path to the output JSON file.")
+    parser.add_argument("--bundle-root", required=True, help="Root directory of the exported bundle.")
+    parser.add_argument(
+        "--item",
+        action="append",
+        default=[],
+        help="Repeatable role=path pair for important artifacts inside or outside the bundle.",
+    )
+    parser.add_argument("--hash-files", action="store_true", default=False, help="Hash file entries.")
+    args = parser.parse_args()
+
+    out_path = Path(args.out).expanduser().resolve()
+    bundle_root = Path(args.bundle_root).expanduser().resolve()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "schema_version": "1.0",
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "bundle_root": str(bundle_root),
+        "bundle_exists": bundle_root.exists(),
+        "artifacts": [
+            path_record(path, role, args.hash_files) for role, path in (parse_item(item) for item in args.item)
+        ],
+        "notes": [],
+    }
+
+    out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print(out_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -36,6 +36,8 @@ Keep one export root such as:
 - `/content/export`
 - `/kaggle/working/export`
 
+The bundled `init_cv_artifact_manifest.py` helper can create `artifact_manifest.json` for that export root.
+
 Write at least:
 
 - `dataset_manifest.json`
@@ -84,6 +86,8 @@ Every long-run VM job should start with a machine-readable bootstrap manifest:
 - threshold or loss settings
 - GPU type
 - start time
+
+The bundled `init_cv_vm_bootstrap_manifest.py` helper provides a starting schema for that file.
 
 ### Liveness
 
