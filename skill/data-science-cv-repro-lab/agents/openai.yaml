@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic CV Repro Lab"
+  short_description: "Reproducible CV experiments, browser lanes, and benchmark-gated promotion"
+  default_prompt: "Use $data-science-cv-repro-lab to make this CV workflow reproducible, audit the browser or training lane, and promote only on benchmark-backed wins."
