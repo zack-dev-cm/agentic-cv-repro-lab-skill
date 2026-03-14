@@ -114,3 +114,23 @@ The common failure mode in agentic CV work is not lack of model ideas. It is los
 - no clean separation between research notes and promotion evidence
 
 This skill encodes guardrails for those failure modes.
+
+## References
+
+This skill is not a verbatim port of any single project. It is a practical synthesis of public references, official tooling guidance, and a real multi-repo CV operating model.
+
+Research lineage and direct references:
+
+- Andrej Karpathy, [`karpathy/autoresearch`](https://github.com/karpathy/autoresearch)
+  - cited here because the skill adapts its planner/searcher/reviewer separation into DS and CV experiment management
+- [OpenClaw Skills](https://docs.openclaw.ai/tools/skills)
+- [OpenClaw Creating Skills](https://docs.openclaw.ai/tools/creating-skills)
+- [OpenClaw ClawHub](https://docs.openclaw.ai/tools/clawhub)
+- [KaggleHub README](https://github.com/Kaggle/kagglehub)
+- [Kaggle docker-python releases](https://github.com/Kaggle/docker-python/releases)
+- [Kaggle dataset metadata docs](https://github.com/Kaggle/kaggle-api/blob/main/docs/datasets_metadata.md)
+- [Kaggle model metadata docs](https://github.com/Kaggle/kaggle-api/blob/main/docs/models_metadata.md)
+- [Kaggle kernel metadata docs](https://github.com/Kaggle/kaggle-api/blob/main/docs/kernels_metadata.md)
+- [PyTorch reproducibility notes](https://docs.pytorch.org/docs/stable/notes/randomness.html)
+- [Albumentations segmentation guidance](https://albumentations.ai/docs/3-basic-usage/semantic-segmentation/)
+- [MLflow tracking quickstart](https://mlflow.org/docs/latest/ml/tracking/quickstart/)
