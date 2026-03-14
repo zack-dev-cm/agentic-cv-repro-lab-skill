@@ -40,6 +40,14 @@ def main() -> int:
 
 Write the product or research question here.
 
+## Execution Lane
+
+- local debug
+- browser notebook
+- Colab GPU
+- custom VM or cluster
+- promotion gate
+
 ## Promotion Gate
 
 Write the benchmark and non-regression surfaces here.
@@ -51,13 +59,18 @@ Write the benchmark and non-regression surfaces here.
 
 - facts only
 
+## Dataset And Model Identity
+
+- dataset version or manifest
+- checkpoint or baseline id
+
 ## Files And Artifacts
 
 - add exact paths
 
 ## Constraints
 
-- note blockers, environment assumptions, and missing assets
+- note blockers, environment assumptions, browser assets, VM assets, and missing data
 """
 
     plan = """# Plan
@@ -65,6 +78,12 @@ Write the benchmark and non-regression surfaces here.
 ## Hypotheses
 
 - hypothesis 1
+
+## Infra Plan
+
+- browser lane
+- Colab GPU lane
+- VM or cluster lane
 
 ## Steps
 
@@ -90,6 +109,11 @@ Write the benchmark and non-regression surfaces here.
 
 - exact commands run
 
+## Browser And Notebook Evidence
+
+- screenshots
+- exported artifact manifest
+
 ## Outputs
 
 - output paths
@@ -108,6 +132,13 @@ Write the benchmark and non-regression surfaces here.
 ## Candidate
 
 - new checkpoint or revision
+
+## Run Card Inputs
+
+- dataset id
+- trainer commit
+- deploy commit
+- benchmark result
 
 ## Decision
 

@@ -1,6 +1,9 @@
 ---
 name: data-science-cv-repro-lab
 description: Run reproducible, agentic computer-vision experiments end to end. Use when the task involves CV training or inference debugging, OpenClaw or browser-driven Colab/Kaggle workflows, preprocessing and augmentation audits, checkpoint comparisons, benchmark-gated deployment decisions, GPU or VM training monitoring, or turning an ad hoc DS/CV workflow into a repeatable playbook.
+homepage: https://github.com/zack-dev-cm/agentic-cv-repro-lab-skill
+user-invocable: false
+metadata: {"openclaw":{"homepage":"https://github.com/zack-dev-cm/agentic-cv-repro-lab-skill","requires":{"anyBins":["python3","python"]}}}
 ---
 
 # Data Science CV Repro Lab
@@ -34,13 +37,14 @@ Turn CV work into a reproducible decision loop:
    - State what blocks promotion.
 
 2. Capture the current state immediately.
-   - Use `python3 scripts/capture_cv_run_context.py --repo-root <repo> --out <json> --markdown-out <md> --path <dataset_or_checkpoint> --param key=value`.
+   - Use `python3 {baseDir}/scripts/capture_cv_run_context.py --repo-root <repo> --out <json> --markdown-out <md> --path <dataset_or_checkpoint> --param key=value`.
    - Record git state, environment, tracked paths, GPU state, and experiment params before launch.
 
 3. Pick the right orchestration lane.
    - Local debug lane: tiny overfit, transform audits, shape and dtype checks.
-   - Browser lane: Colab or Kaggle steps that must happen in a real browser or notebook UI.
-   - VM or cluster lane: long runs with heartbeats, watchdogs, stall detection, and auto-stop.
+   - Browser notebook lane: Colab or Kaggle steps that must happen in a real browser or notebook UI.
+   - Colab GPU lane: runtime selection, smoke validation, artifact export, and browser evidence.
+   - Custom VM or cluster lane: long runs with heartbeats, watchdogs, stall detection, sync, and auto-stop.
    - Promotion lane: fixed benchmark matrix plus customer-facing surface checks.
 
 4. Work the debug ladder in order.
@@ -77,6 +81,23 @@ Turn CV work into a reproducible decision loop:
 - Pull artifacts back locally as files, not only screenshots.
 - Use explicit timeout and marker logic; do not rely on visual guesswork.
 
+### Colab GPU rules
+
+- Select the accelerator explicitly before running expensive cells.
+- Verify GPU readiness from inside the notebook before the long run.
+- Use a smoke cell that proves the runtime, imports, and data mounts all work.
+- Export all required artifacts to one stable bundle directory.
+- Pull the artifact manifest plus at least one preview image back to local storage.
+
+### Custom VM and cluster rules
+
+- Create a named run root before launch.
+- Write a machine-readable bootstrap manifest with commit, dataset, env, and command details.
+- Run long jobs under a session, heartbeat, or supervisor so liveness is explicit.
+- Track GPU utilization, epoch movement, and log freshness.
+- Sync summaries and checkpoints back to local storage on a schedule.
+- Auto-stop or downgrade to a debug path when the run is clearly unhealthy.
+
 ### CV training rules
 
 - Do not change architecture first.
@@ -90,6 +111,13 @@ Turn CV work into a reproducible decision loop:
 - If the semantic model improves but the deployed overlay or service output regresses, fix the downstream path before promotion.
 - Prefer a machine-readable run card plus a short markdown summary.
 
+### Public distribution rules
+
+- Use `{baseDir}` when pointing at bundled scripts or references.
+- Keep secrets, tokens, private dataset identifiers, browser profile names, and internal URLs out of the skill bundle.
+- Do not publish repo-specific absolute paths.
+- Keep private specialization in a local override skill, not the public package.
+
 ## References
 
 Read only the reference that matches the task:
@@ -100,10 +128,14 @@ Read only the reference that matches the task:
   - How to adapt `karpathy/autoresearch` style loops to DS and CV work.
 - `references/openclaw-browser-lane.md`
   - OpenClaw, CDP, Colab, screenshot, artifact-pull, and timeout patterns.
+- `references/colab-vm-operations.md`
+  - Google Colab GPU management and custom VM lifecycle guidance.
 - `references/kaggle-2026-practices.md`
   - Current Kaggle platform habits for reproducibility, versioning, and notebook execution.
-- `references/wrinkle-stack-playbook.md`
-  - Workspace-specific specialization for `derm` and `poreswrinkles`. Read only when the task is in that stack.
+- `references/cross-repo-cv-patterns.md`
+  - Generic patterns for benchmark, trainer, and deploy repos split across one program.
+- `references/publication-security.md`
+  - Publication checklist for OpenClaw or ClawHub and leak-prevention rules.
 
 ## Bundled Scripts
 
