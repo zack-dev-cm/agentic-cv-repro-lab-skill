@@ -19,6 +19,17 @@ Source:
 
 Map those ideas onto DS and CV work like this:
 
+### Role split
+
+Even in a single-agent workflow, keep these roles conceptually separate:
+
+- planner
+- executor
+- reviewer
+- promoter
+
+That separation prevents one bad run from turning straight into a promotion decision.
+
 ### Topic file
 
 Write the product question, benchmark set, and promotion gate before experimentation starts.
@@ -59,6 +70,7 @@ Preserve machine-readable evidence:
 - preview grids
 - benchmark snapshots
 - run summaries
+- run cards
 
 ### Review layer
 
@@ -81,3 +93,16 @@ For a non-trivial CV investigation, create:
 - `promotion.md`
 
 Use the bundled scaffold script when you want this structure quickly.
+
+## Run Card Pattern
+
+For every serious candidate, keep one machine-readable run card that joins:
+
+- dataset identity
+- source commits
+- browser lane state
+- training lane state
+- benchmark outputs
+- decision
+
+The bundled `init_cv_run_card.py` script gives a starting schema for that file.

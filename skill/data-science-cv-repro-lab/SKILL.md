@@ -58,6 +58,7 @@ Turn CV work into a reproducible decision loop:
    - External browser LLM output is hypothesis generation, not release evidence.
    - Browser steps must emit screenshots, machine-readable scores, and explicit success markers.
    - Hard-fail on unavailable browser modes, dead CDP sessions, or ambiguous notebook state.
+   - Keep planner, executor, reviewer, and promoter responsibilities distinct even if one agent performs more than one role.
 
 6. Promote only on full-surface wins.
    - Raw checkpoint quality
@@ -72,6 +73,14 @@ Turn CV work into a reproducible decision loop:
 - Keep separate files or sections for `research`, `plan`, `journal`, and `evidence`.
 - Summaries are not evidence. Preserve the artifact paths.
 - If a workflow uses both code changes and browser actions, record both.
+
+### Agentic orchestration rules
+
+- Planner: defines the question, benchmark, stop condition, and chosen execution lane.
+- Executor: runs the browser, notebook, local, or VM steps and preserves artifacts.
+- Reviewer: checks whether the evidence actually answers the question and catches regressions.
+- Promoter: makes the final hold or promote decision from the run card, not from memory.
+- If one agent performs all roles, keep the outputs separated anyway.
 
 ### Browser automation rules
 
@@ -110,6 +119,7 @@ Turn CV work into a reproducible decision loop:
 - Keep the last trusted baseline intact until the candidate clears agreed gates.
 - If the semantic model improves but the deployed overlay or service output regresses, fix the downstream path before promotion.
 - Prefer a machine-readable run card plus a short markdown summary.
+- Initialize that run card before or at launch time so later steps append to one canonical record.
 
 ### Public distribution rules
 
@@ -143,3 +153,5 @@ Read only the reference that matches the task:
   - Capture a compact environment, git, GPU, and artifact snapshot.
 - `scripts/init_cv_task_scaffold.py`
   - Create a reusable research, plan, journal, and evidence scaffold for a new CV task.
+- `scripts/init_cv_run_card.py`
+  - Create a machine-readable candidate run card for training, benchmark, and promotion evidence.

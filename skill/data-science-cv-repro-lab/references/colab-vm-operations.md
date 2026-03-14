@@ -55,6 +55,18 @@ When browser automation is part of the task, preserve:
 - marker or completion signal
 - local artifact pull results
 
+### Colab decision rule
+
+Do not let a successful browser run stand in for a successful model run.
+
+A Colab pass is only complete when:
+
+- the runtime was correct
+- the smoke cell passed
+- the export bundle exists
+- the bundle was pulled locally
+- the candidate was added to the run card
+
 ## Custom GPU VM Management
 
 ### Bootstrap
@@ -115,6 +127,12 @@ Sync back:
 - checkpoint path or exported model
 - benchmark snapshot
 - preview boards
+
+### VM decision rule
+
+Do not promote directly from live VM state.
+
+Promotion should happen only after the synced artifacts have been reviewed locally or from a trusted artifact store.
 
 ### Shutdown
 

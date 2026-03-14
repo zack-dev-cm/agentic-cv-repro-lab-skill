@@ -38,3 +38,13 @@ Source:
 5. Ensure bundled scripts do not combine env harvesting with network exfiltration.
 6. Ensure the skill uses `{baseDir}` for bundled file references.
 7. If private specialization is still needed, keep it in a local override skill instead of the public bundle.
+
+## Practical audit commands
+
+Run these before publishing:
+
+```bash
+rg -n "/Users/|/home/|localhost|127\\.0\\.0\\.1|token|api[_-]?key|secret|password" ./skill
+python3 -m py_compile ./skill/*/scripts/*.py
+diff -r ./skill/data-science-cv-repro-lab ~/.codex/skills/data-science-cv-repro-lab
+```

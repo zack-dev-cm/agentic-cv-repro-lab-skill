@@ -23,6 +23,7 @@ The skill was generalized from a real multi-repo CV training stack, then scrubbe
 - `skill/data-science-cv-repro-lab/references/publication-security.md`
 - `skill/data-science-cv-repro-lab/scripts/capture_cv_run_context.py`
 - `skill/data-science-cv-repro-lab/scripts/init_cv_task_scaffold.py`
+- `skill/data-science-cv-repro-lab/scripts/init_cv_run_card.py`
 
 ## Install Into Codex
 
@@ -51,6 +52,12 @@ rsync -a skill/data-science-cv-repro-lab/ "$CODEX_HOME/skills/data-science-cv-re
 4. Treat browser LLM advice as hypothesis generation only.
 5. Promote only on fixed benchmark wins across every required surface.
 
+## Built-In Helpers
+
+- `capture_cv_run_context.py`: capture git, environment, GPU, and tracked-path state
+- `init_cv_task_scaffold.py`: create research, plan, journal, evidence, and promotion docs
+- `init_cv_run_card.py`: create a machine-readable candidate run card for benchmark and release review
+
 ## OpenClaw And ClawHub Publication
 
 OpenClaw skill format and gating details:
@@ -69,13 +76,16 @@ ClawHub is public by default. Before publishing, keep the bundle free of:
 
 If you need a private specialization for one company or repo, keep it as a local override in `~/.openclaw/skills` or `<workspace>/skills`, not in the public bundle.
 
-Example publish command:
+Recommended publish flow:
 
 ```bash
+clawhub login
+export CLAWHUB_DISABLE_TELEMETRY=1
 clawhub publish ./skill/data-science-cv-repro-lab \
   --slug data-science-cv-repro-lab \
   --name "Agentic CV Repro Lab" \
   --version 1.1.0 \
+  --changelog "Add Colab GPU, VM lifecycle, run-card, and publication hardening guidance" \
   --tags latest,computer-vision,reproducibility
 ```
 
