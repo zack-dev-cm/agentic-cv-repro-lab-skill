@@ -127,6 +127,7 @@ Sync back:
 
 - dataset manifest
 - candidate run card
+- rendered run summary
 - summary json
 - history csv
 - checkpoint path or exported model

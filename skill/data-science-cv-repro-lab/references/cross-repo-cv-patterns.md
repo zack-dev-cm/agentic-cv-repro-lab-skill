@@ -45,6 +45,7 @@ The bundled helpers cover the minimum shared backbone:
 - `init_cv_dataset_manifest.py`
 - `init_cv_browser_run_card.py`
 - `init_cv_run_card.py`
+- `render_cv_run_summary.py`
 
 ## Failure pattern to avoid
 

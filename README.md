@@ -26,6 +26,7 @@ The skill was generalized from a real multi-repo CV training stack, then scrubbe
 - `skill/data-science-cv-repro-lab/scripts/init_cv_run_card.py`
 - `skill/data-science-cv-repro-lab/scripts/init_cv_dataset_manifest.py`
 - `skill/data-science-cv-repro-lab/scripts/init_cv_browser_run_card.py`
+- `skill/data-science-cv-repro-lab/scripts/render_cv_run_summary.py`
 
 ## Install Into Codex
 
@@ -65,6 +66,7 @@ rsync -a skill/data-science-cv-repro-lab/ "$CODEX_HOME/skills/data-science-cv-re
 - `init_cv_run_card.py`: create a machine-readable candidate run card for benchmark and release review
 - `init_cv_dataset_manifest.py`: create a reusable dataset manifest shared across training and evaluation repos
 - `init_cv_browser_run_card.py`: create a sanitized browser evidence record for Colab, Kaggle, or other notebook UIs
+- `render_cv_run_summary.py`: generate markdown release notes directly from the run card
 
 ## OpenClaw And ClawHub Publication
 
@@ -92,8 +94,8 @@ export CLAWHUB_DISABLE_TELEMETRY=1
 clawhub publish ./skill/data-science-cv-repro-lab \
   --slug data-science-cv-repro-lab \
   --name "Agentic CV Repro Lab" \
-  --version 1.2.0 \
-  --changelog "Add dataset-manifest and browser-run-card helpers plus stronger publication-safe browser evidence rules" \
+  --version 1.3.0 \
+  --changelog "Add JSON-to-markdown run summary rendering and tighten evidence packaging" \
   --tags latest,computer-vision,reproducibility
 ```
 

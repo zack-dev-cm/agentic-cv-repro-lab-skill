@@ -126,6 +126,7 @@ Turn CV work into a reproducible decision loop:
 - If the semantic model improves but the deployed overlay or service output regresses, fix the downstream path before promotion.
 - Prefer a machine-readable run card plus a short markdown summary.
 - Initialize that run card before or at launch time so later steps append to one canonical record.
+- Render the markdown summary from the run card instead of hand-writing it when possible.
 
 ### Public distribution rules
 
@@ -165,3 +166,5 @@ Read only the reference that matches the task:
   - Create a reusable dataset identity manifest for shared CV benchmarks and training runs.
 - `scripts/init_cv_browser_run_card.py`
   - Create a sanitized browser evidence record for Colab, Kaggle, or other notebook UI runs.
+- `scripts/render_cv_run_summary.py`
+  - Render a concise markdown release summary from the machine-readable run card.
