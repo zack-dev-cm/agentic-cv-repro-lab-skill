@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""Create a sanitized browser run card skeleton for notebook-style UI work."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", required=True, help="Path to the output JSON file.")
+    parser.add_argument("--target-url", required=True, help="Notebook or browser target URL.")
+    parser.add_argument("--tool", default="openclaw", help="Browser automation tool name.")
+    parser.add_argument("--browser-alias", default="", help="Sanitized browser profile alias.")
+    parser.add_argument("--session-alias", default="", help="Sanitized browser session alias.")
+    parser.add_argument("--requested-mode", default="", help="Requested model or notebook mode.")
+    parser.add_argument("--runtime-type", default="", help="Requested runtime type such as T4 or A100.")
+    parser.add_argument("--timeout-seconds", type=int, default=0, help="Primary execution timeout.")
+    args = parser.parse_args()
+
+    out_path = Path(args.out).expanduser().resolve()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    payload = {
+        "schema_version": "1.0",
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "browser": {
+            "tool": args.tool,
+            "browser_alias": args.browser_alias,
+            "session_alias": args.session_alias,
+            "attach_status": "",
+            "requested_mode": args.requested_mode,
+            "actual_mode": "",
+        },
+        "target": {
+            "url": args.target_url,
+            "page_title": "",
+            "runtime_type": args.runtime_type,
+        },
+        "execution": {
+            "timeout_seconds": args.timeout_seconds,
+            "readiness_probe": "",
+            "success_marker": "",
+            "temporary_cell_used": False,
+        },
+        "evidence": {
+            "screenshots": [],
+            "downloads": [],
+            "artifact_manifest_path": "",
+            "local_pull_status": "",
+        },
+        "outcome": {
+            "status": "pending",
+            "reason": "",
+        },
+    }
+
+    out_path.write_text(f"{json.dumps(payload, indent=2)}\n", encoding="utf-8")
+    print(out_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

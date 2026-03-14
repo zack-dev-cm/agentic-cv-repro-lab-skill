@@ -22,13 +22,16 @@ Every candidate should carry enough metadata to reconnect all repos:
 - dataset manifest id
 - checkpoint id
 - export id
+- browser run id
 - promotion decision id
 
 ## Best practice
 
 Create one canonical run card that joins:
 
+- dataset manifest
 - training config
+- browser run card
 - output roots
 - benchmark table
 - runtime export result
@@ -36,6 +39,12 @@ Create one canonical run card that joins:
 - final decision
 
 Generate human-readable markdown from that run card instead of hand-writing the whole story each time.
+
+The bundled helpers cover the minimum shared backbone:
+
+- `init_cv_dataset_manifest.py`
+- `init_cv_browser_run_card.py`
+- `init_cv_run_card.py`
 
 ## Failure pattern to avoid
 

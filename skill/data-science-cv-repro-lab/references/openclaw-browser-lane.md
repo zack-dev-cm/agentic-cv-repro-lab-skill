@@ -18,13 +18,21 @@ Use this reference when the workflow depends on a real browser session for Colab
 
 ## What To Preserve
 
-- browser profile name
-- CDP URL or attach result
+- browser profile alias
+- sanitized session alias plus attach result
 - target URL
+- requested mode and actual mode
 - screenshots
 - output JSON or CSV
 - local artifact paths
 - timeout used
+- browser run card path
+
+## Sanitization Boundary
+
+Keep raw CDP URLs, websocket endpoints, and private profile names out of durable public-facing artifacts.
+
+If a local debug session needs that information, keep it in ephemeral scratch logs only. The durable record should preserve aliases, attach state, screenshots, artifacts, and the final outcome.
 
 ## Failure Modes Seen In Practice
 

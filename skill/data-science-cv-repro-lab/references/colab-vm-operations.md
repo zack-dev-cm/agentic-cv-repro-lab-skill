@@ -38,7 +38,9 @@ Keep one export root such as:
 
 Write at least:
 
+- `dataset_manifest.json`
 - `run_context.json`
+- `browser_run_card.json` when a browser lane was used
 - `artifact_manifest.json`
 - `metrics.csv` or `metrics.json`
 - `train_strategy.json`
@@ -51,6 +53,7 @@ When browser automation is part of the task, preserve:
 
 - runtime type selected
 - notebook URL
+- sanitized browser alias
 - screenshots
 - marker or completion signal
 - local artifact pull results
@@ -74,7 +77,7 @@ A Colab pass is only complete when:
 Every long-run VM job should start with a machine-readable bootstrap manifest:
 
 - git commit
-- dataset id or manifest hash
+- dataset id plus manifest hash
 - command line
 - output root
 - model family
@@ -122,6 +125,8 @@ Do not leave the only copy of a useful candidate on the VM.
 
 Sync back:
 
+- dataset manifest
+- candidate run card
 - summary json
 - history csv
 - checkpoint path or exported model

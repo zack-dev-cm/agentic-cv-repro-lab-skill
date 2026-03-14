@@ -56,7 +56,8 @@ For CV, "search" usually means:
 For browser tasks, include:
 
 - target URL
-- browser profile
+- browser profile alias
+- browser session alias
 - required attachments
 - success marker
 - artifact pull list
@@ -65,10 +66,12 @@ For browser tasks, include:
 
 Preserve machine-readable evidence:
 
+- dataset manifests
 - metrics CSV or JSON
 - screenshots
 - preview grids
 - benchmark snapshots
+- browser run cards
 - run summaries
 - run cards
 
@@ -106,3 +109,8 @@ For every serious candidate, keep one machine-readable run card that joins:
 - decision
 
 The bundled `init_cv_run_card.py` script gives a starting schema for that file.
+
+When browser execution matters, pair it with:
+
+- `init_cv_browser_run_card.py` for notebook or browser evidence
+- `init_cv_dataset_manifest.py` for the shared dataset identity

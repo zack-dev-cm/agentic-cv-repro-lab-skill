@@ -55,12 +55,17 @@ def main() -> int:
         "browser_lane": {
             "used": False,
             "tool": "",
+            "browser_alias": "",
+            "session_alias": "",
             "target_url": "",
             "runtime_type": "",
             "requested_mode": "",
             "actual_mode": "",
+            "attach_status": "",
             "screenshots": [],
             "artifact_manifest_path": "",
+            "browser_run_card_path": "",
+            "local_pull_status": "",
             "status": "",
         },
         "evaluation": {

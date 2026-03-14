@@ -24,6 +24,8 @@ The skill was generalized from a real multi-repo CV training stack, then scrubbe
 - `skill/data-science-cv-repro-lab/scripts/capture_cv_run_context.py`
 - `skill/data-science-cv-repro-lab/scripts/init_cv_task_scaffold.py`
 - `skill/data-science-cv-repro-lab/scripts/init_cv_run_card.py`
+- `skill/data-science-cv-repro-lab/scripts/init_cv_dataset_manifest.py`
+- `skill/data-science-cv-repro-lab/scripts/init_cv_browser_run_card.py`
 
 ## Install Into Codex
 
@@ -38,25 +40,31 @@ rsync -a skill/data-science-cv-repro-lab/ "$CODEX_HOME/skills/data-science-cv-re
 
 ## Operating Model
 
-1. Capture the run context before touching training.
-2. Pick the right lane:
+1. Initialize the dataset manifest, candidate run card, and browser run card when the notebook UI matters.
+2. Capture the run context before touching training.
+3. Pick the right lane:
    - local debug lane
    - browser-only Colab or Kaggle lane
-   - VM or cluster long-run lane
+   - explicit Colab GPU lane
+   - custom VM or cluster long-run lane
    - benchmark or promotion lane
-3. Keep every step backed by artifacts:
+4. Keep every step backed by artifacts:
+   - dataset manifests
    - previews
    - metrics CSV or JSON
    - screenshots
+   - browser run cards
    - run cards
-4. Treat browser LLM advice as hypothesis generation only.
-5. Promote only on fixed benchmark wins across every required surface.
+5. Treat browser LLM advice as hypothesis generation only.
+6. Promote only on fixed benchmark wins across every required surface.
 
 ## Built-In Helpers
 
 - `capture_cv_run_context.py`: capture git, environment, GPU, and tracked-path state
 - `init_cv_task_scaffold.py`: create research, plan, journal, evidence, and promotion docs
 - `init_cv_run_card.py`: create a machine-readable candidate run card for benchmark and release review
+- `init_cv_dataset_manifest.py`: create a reusable dataset manifest shared across training and evaluation repos
+- `init_cv_browser_run_card.py`: create a sanitized browser evidence record for Colab, Kaggle, or other notebook UIs
 
 ## OpenClaw And ClawHub Publication
 
@@ -84,8 +92,8 @@ export CLAWHUB_DISABLE_TELEMETRY=1
 clawhub publish ./skill/data-science-cv-repro-lab \
   --slug data-science-cv-repro-lab \
   --name "Agentic CV Repro Lab" \
-  --version 1.1.0 \
-  --changelog "Add Colab GPU, VM lifecycle, run-card, and publication hardening guidance" \
+  --version 1.2.0 \
+  --changelog "Add dataset-manifest and browser-run-card helpers plus stronger publication-safe browser evidence rules" \
   --tags latest,computer-vision,reproducibility
 ```
 

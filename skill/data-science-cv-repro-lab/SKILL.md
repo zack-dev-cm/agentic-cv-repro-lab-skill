@@ -3,7 +3,7 @@ name: data-science-cv-repro-lab
 description: Run reproducible, agentic computer-vision experiments end to end. Use when the task involves CV training or inference debugging, OpenClaw or browser-driven Colab/Kaggle workflows, preprocessing and augmentation audits, checkpoint comparisons, benchmark-gated deployment decisions, GPU or VM training monitoring, or turning an ad hoc DS/CV workflow into a repeatable playbook.
 homepage: https://github.com/zack-dev-cm/agentic-cv-repro-lab-skill
 user-invocable: false
-metadata: {"openclaw":{"homepage":"https://github.com/zack-dev-cm/agentic-cv-repro-lab-skill","requires":{"anyBins":["python3","python"]}}}
+metadata: {"openclaw":{"homepage":"https://github.com/zack-dev-cm/agentic-cv-repro-lab-skill","skillKey":"data-science-cv-repro-lab","requires":{"anyBins":["python3","python"]}}}
 ---
 
 # Data Science CV Repro Lab
@@ -36,31 +36,36 @@ Turn CV work into a reproducible decision loop:
    - Name the non-regression surfaces.
    - State what blocks promotion.
 
-2. Capture the current state immediately.
+2. Initialize the durable records immediately.
+   - Use `python3 {baseDir}/scripts/init_cv_dataset_manifest.py --out <json> --dataset-id <id>`.
+   - Use `python3 {baseDir}/scripts/init_cv_run_card.py --out <json> --candidate-id <id> --task-id <task> --baseline-id <baseline>`.
+   - If a browser lane matters, use `python3 {baseDir}/scripts/init_cv_browser_run_card.py --out <json> --target-url <url>`.
+
+3. Capture the current state immediately.
    - Use `python3 {baseDir}/scripts/capture_cv_run_context.py --repo-root <repo> --out <json> --markdown-out <md> --path <dataset_or_checkpoint> --param key=value`.
    - Record git state, environment, tracked paths, GPU state, and experiment params before launch.
 
-3. Pick the right orchestration lane.
+4. Pick the right orchestration lane.
    - Local debug lane: tiny overfit, transform audits, shape and dtype checks.
    - Browser notebook lane: Colab or Kaggle steps that must happen in a real browser or notebook UI.
    - Colab GPU lane: runtime selection, smoke validation, artifact export, and browser evidence.
    - Custom VM or cluster lane: long runs with heartbeats, watchdogs, stall detection, sync, and auto-stop.
    - Promotion lane: fixed benchmark matrix plus customer-facing surface checks.
 
-4. Work the debug ladder in order.
+5. Work the debug ladder in order.
    - `Data audit`: split integrity, label normalization, image-mask pairing, resize geometry.
    - `Preview audit`: at least one augmentation preview and one transformed batch preview.
    - `Tiny overfit`: 4-16 shared samples with `no_aug`.
    - `Short resumed run`: continue from the best trusted checkpoint.
    - `Long run`: only after the short loop is healthy.
 
-5. Keep agentic work bounded.
+6. Keep agentic work bounded.
    - External browser LLM output is hypothesis generation, not release evidence.
    - Browser steps must emit screenshots, machine-readable scores, and explicit success markers.
    - Hard-fail on unavailable browser modes, dead CDP sessions, or ambiguous notebook state.
    - Keep planner, executor, reviewer, and promoter responsibilities distinct even if one agent performs more than one role.
 
-6. Promote only on full-surface wins.
+7. Promote only on full-surface wins.
    - Raw checkpoint quality
    - Exported or runtime quality
    - User-facing render or product surface
@@ -89,6 +94,7 @@ Turn CV work into a reproducible decision loop:
 - Capture at least two screenshots when the browser UI is part of the validation path.
 - Pull artifacts back locally as files, not only screenshots.
 - Use explicit timeout and marker logic; do not rely on visual guesswork.
+- Record browser profile aliases and session aliases in durable artifacts; keep raw CDP URLs in ephemeral local debug logs only.
 
 ### Colab GPU rules
 
@@ -155,3 +161,7 @@ Read only the reference that matches the task:
   - Create a reusable research, plan, journal, and evidence scaffold for a new CV task.
 - `scripts/init_cv_run_card.py`
   - Create a machine-readable candidate run card for training, benchmark, and promotion evidence.
+- `scripts/init_cv_dataset_manifest.py`
+  - Create a reusable dataset identity manifest for shared CV benchmarks and training runs.
+- `scripts/init_cv_browser_run_card.py`
+  - Create a sanitized browser evidence record for Colab, Kaggle, or other notebook UI runs.

@@ -1,4 +1,4 @@
 interface:
   display_name: "Agentic CV Repro Lab"
-  short_description: "Reproducible CV experiments across Colab, custom VMs, and promotion gates"
-  default_prompt: "Use $data-science-cv-repro-lab to make this CV workflow reproducible, audit the Colab or VM lane, and promote only on benchmark-backed wins."
+  short_description: "Reproducible CV experiments across Colab, Kaggle, custom VMs, and promotion gates"
+  default_prompt: "Use $data-science-cv-repro-lab to capture dataset and browser evidence, audit the Colab or VM lane, and promote only on benchmark-backed wins."

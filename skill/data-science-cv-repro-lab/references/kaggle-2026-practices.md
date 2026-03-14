@@ -82,6 +82,8 @@ A good Kaggle-style run card includes:
 - local benchmark result
 - exported artifact paths
 
+Mirror the same dataset versions and notebook identifiers into your local dataset manifest and browser run card so the Kaggle lane and the non-browser lane stay joinable.
+
 ## CV-Specific Implication
 
 For CV tasks, the strongest Kaggle habit to copy is this:

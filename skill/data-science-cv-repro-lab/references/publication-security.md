@@ -13,6 +13,7 @@ Source:
 
 - secrets, tokens, API keys, passwords
 - private browser profile names
+- raw CDP URLs or websocket endpoints
 - private notebook URLs
 - internal hostnames or VM names
 - absolute local filesystem paths
@@ -34,17 +35,18 @@ Source:
 1. Search for absolute paths.
 2. Search for usernames, profile names, and internal URLs.
 3. Search for notebook ids and dataset ids that are not intended to be public.
-4. Search for token-like strings and secret-shaped env vars.
-5. Ensure bundled scripts do not combine env harvesting with network exfiltration.
-6. Ensure the skill uses `{baseDir}` for bundled file references.
-7. If private specialization is still needed, keep it in a local override skill instead of the public bundle.
+4. Search for raw CDP URLs, websocket endpoints, and browser attach dumps.
+5. Search for token-like strings and secret-shaped env vars.
+6. Ensure bundled scripts do not combine env harvesting with network exfiltration.
+7. Ensure the skill uses `{baseDir}` for bundled file references.
+8. If private specialization is still needed, keep it in a local override skill instead of the public bundle.
 
 ## Practical audit commands
 
 Run these before publishing:
 
 ```bash
-rg -n "/Users/|/home/|localhost|127\\.0\\.0\\.1|token|api[_-]?key|secret|password" ./skill
+rg -n "/Users/|/home/|localhost|127\\.0\\.0\\.1|ws://|wss://|devtools/browser|token|api[_-]?key|secret|password" ./skill
 python3 -m py_compile ./skill/*/scripts/*.py
 diff -r ./skill/data-science-cv-repro-lab ~/.codex/skills/data-science-cv-repro-lab
 ```
