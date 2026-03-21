@@ -43,12 +43,6 @@ Source:
 8. Review publish metadata, tags, topics, and changelog text for internal names or customer terms.
 9. If private specialization is still needed, keep it in a local override skill instead of the public bundle.
 
-## Practical audit commands
+## Practical review step
 
-Run these before publishing:
-
-```bash
-rg -n "/Users/|/home/|localhost|127\\.0\\.0\\.1|ws://|wss://|devtools/browser|token|api[_-]?key|secret|password" ./skill
-python3 -m py_compile ./skill/*/scripts/*.py
-diff -r ./skill/data-science-cv-repro-lab ~/.codex/skills/data-science-cv-repro-lab
-```
+Use your local audit tooling to scan for absolute paths, localhost URLs, websocket endpoints, tokens, and secret-shaped strings before publishing.

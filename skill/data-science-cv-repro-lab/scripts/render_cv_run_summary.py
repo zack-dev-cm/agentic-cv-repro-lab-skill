@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from cv_public_safety import is_absolute_like, sanitize_path, sanitize_url_for_display
+
 
 def load_json(path: Path) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -16,14 +18,24 @@ def load_json(path: Path) -> dict[str, Any]:
     return data
 
 
-def add_field(lines: list[str], label: str, value: Any) -> None:
+def display_value(value: Any, *, allow_private_details: bool) -> Any:
+    if allow_private_details or not isinstance(value, str):
+        return value
+    if "://" in value:
+        return sanitize_url_for_display(value, allow_raw=False)
+    if is_absolute_like(value):
+        return sanitize_path(value, allow_absolute_paths=False)
+    return value
+
+
+def add_field(lines: list[str], label: str, value: Any, *, allow_private_details: bool) -> None:
     if value is None:
         return
     if isinstance(value, str) and not value.strip():
         return
     if isinstance(value, list) and not value:
         return
-    lines.append(f"- {label}: `{value}`")
+    lines.append(f"- {label}: `{display_value(value, allow_private_details=allow_private_details)}`")
 
 
 def render_repo_lines(lines: list[str], repos: dict[str, Any]) -> None:
@@ -53,7 +65,7 @@ def render_metrics(lines: list[str], metrics: dict[str, Any]) -> None:
     lines.append("")
 
 
-def render_browser(lines: list[str], browser_lane: dict[str, Any]) -> None:
+def render_browser(lines: list[str], browser_lane: dict[str, Any], *, allow_private_details: bool) -> None:
     if not browser_lane.get("used"):
         return
     lines.append("## Browser Lane")
@@ -62,25 +74,33 @@ def render_browser(lines: list[str], browser_lane: dict[str, Any]) -> None:
         "browser_alias",
         "session_alias",
         "target_url",
+        "target_host",
+        "target_kind",
+        "target_label",
+        "url_redacted",
         "runtime_type",
         "requested_mode",
         "actual_mode",
         "attach_status",
+        "timeout_seconds",
         "artifact_manifest_path",
         "browser_run_card_path",
+        "validation_scorecard_path",
         "local_pull_status",
         "status",
     ):
-        add_field(lines, key, browser_lane.get(key))
+        add_field(lines, key, browser_lane.get(key), allow_private_details=allow_private_details)
     screenshots = browser_lane.get("screenshots") or []
     if screenshots:
         lines.append(f"- screenshots: `{len(screenshots)}`")
         for path in screenshots[:10]:
-            lines.append(f"- screenshot_path: `{path}`")
+            lines.append(
+                f"- screenshot_path: `{display_value(path, allow_private_details=allow_private_details)}`"
+            )
     lines.append("")
 
 
-def render_training(lines: list[str], training: dict[str, Any]) -> None:
+def render_training(lines: list[str], training: dict[str, Any], *, allow_private_details: bool) -> None:
     lines.append("## Training")
     for key in (
         "lane",
@@ -90,32 +110,36 @@ def render_training(lines: list[str], training: dict[str, Any]) -> None:
         "checkpoint_path",
         "export_path",
     ):
-        add_field(lines, key, training.get(key))
+        add_field(lines, key, training.get(key), allow_private_details=allow_private_details)
     command = training.get("command") or []
     if command:
-        lines.append(f"- command: `{' '.join(str(part) for part in command)}`")
+        rendered = " ".join(str(display_value(part, allow_private_details=allow_private_details)) for part in command)
+        lines.append(f"- command: `{rendered}`")
     config_summary = training.get("config_summary") or {}
     if config_summary:
         lines.append("- config_summary:")
         for key in sorted(config_summary):
-            lines.append(f"  - `{key}`: `{config_summary[key]}`")
+            value = display_value(config_summary[key], allow_private_details=allow_private_details)
+            lines.append(f"  - `{key}`: `{value}`")
     lines.append("")
 
 
-def render_evaluation(lines: list[str], evaluation: dict[str, Any]) -> None:
+def render_evaluation(lines: list[str], evaluation: dict[str, Any], *, allow_private_details: bool) -> None:
     lines.append("## Evaluation")
     for key in (
         "benchmark_set",
         "semantic_summary_path",
         "runtime_summary_path",
         "ui_gate_summary_path",
+        "product_surface_summary_path",
+        "promotion_bundle_path",
     ):
-        add_field(lines, key, evaluation.get(key))
+        add_field(lines, key, evaluation.get(key), allow_private_details=allow_private_details)
     render_metrics(lines, evaluation.get("metrics") or {})
     per_case = evaluation.get("per_case") or []
     if per_case:
         lines.append(f"- per_case_records: `{len(per_case)}`")
-        lines.append("")
+    lines.append("")
 
 
 def main() -> int:
@@ -134,16 +158,16 @@ def main() -> int:
 
     lines = [f"# {title}", ""]
 
-    add_field(lines, "candidate_id", payload.get("candidate_id"))
-    add_field(lines, "task_id", payload.get("task_id"))
-    add_field(lines, "baseline_id", payload.get("baseline_id"))
-    add_field(lines, "created_utc", payload.get("created_utc"))
+    add_field(lines, "candidate_id", payload.get("candidate_id"), allow_private_details=False)
+    add_field(lines, "task_id", payload.get("task_id"), allow_private_details=False)
+    add_field(lines, "baseline_id", payload.get("baseline_id"), allow_private_details=False)
+    add_field(lines, "created_utc", payload.get("created_utc"), allow_private_details=False)
     lines.append("")
 
     problem = payload.get("problem") or {}
     lines.append("## Problem")
-    add_field(lines, "summary", problem.get("summary"))
-    add_field(lines, "primary_metric", problem.get("primary_metric"))
+    add_field(lines, "summary", problem.get("summary"), allow_private_details=False)
+    add_field(lines, "primary_metric", problem.get("primary_metric"), allow_private_details=False)
     surfaces = problem.get("non_regression_surfaces") or []
     if surfaces:
         for surface in surfaces:
@@ -155,17 +179,17 @@ def main() -> int:
     data = payload.get("data") or {}
     lines.append("## Data")
     for key in ("dataset_id", "dataset_version", "manifest_path", "manifest_sha256"):
-        add_field(lines, key, data.get(key))
+        add_field(lines, key, data.get(key), allow_private_details=False)
     lines.append("")
 
-    render_training(lines, payload.get("training") or {})
-    render_browser(lines, payload.get("browser_lane") or {})
-    render_evaluation(lines, payload.get("evaluation") or {})
+    render_training(lines, payload.get("training") or {}, allow_private_details=False)
+    render_browser(lines, payload.get("browser_lane") or {}, allow_private_details=False)
+    render_evaluation(lines, payload.get("evaluation") or {}, allow_private_details=False)
 
     decision = payload.get("decision") or {}
     lines.append("## Decision")
     for key in ("status", "reason", "rollback_target"):
-        add_field(lines, key, decision.get(key))
+        add_field(lines, key, decision.get(key), allow_private_details=False)
     lines.append("")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)

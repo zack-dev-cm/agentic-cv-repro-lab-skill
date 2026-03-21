@@ -4,16 +4,16 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
-import importlib
 import json
-import os
 import platform
 import subprocess
 import sys
 from datetime import datetime, timezone
+from importlib import metadata as importlib_metadata
 from pathlib import Path
 from typing import Any
+
+from cv_public_safety import sanitize_path
 
 
 DEFAULT_MODULES = [
@@ -33,19 +33,6 @@ DEFAULT_MODULES = [
     "mlflow",
 ]
 
-DEFAULT_ENV_PREFIXES = [
-    "CUDA",
-    "CUDNN",
-    "PYTHON",
-    "TORCH",
-    "WANDB",
-    "MLFLOW",
-    "DVC",
-    "OMP",
-    "MKL",
-]
-
-
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
     try:
         proc = subprocess.run(
@@ -60,17 +47,6 @@ def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
     return proc.returncode, proc.stdout.strip(), proc.stderr.strip()
 
 
-def sha256_file(path: Path, block_size: int = 1024 * 1024) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as fh:
-        while True:
-            chunk = fh.read(block_size)
-            if not chunk:
-                break
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def parse_key_value(items: list[str]) -> dict[str, str]:
     out: dict[str, str] = {}
     for item in items:
@@ -81,13 +57,22 @@ def parse_key_value(items: list[str]) -> dict[str, str]:
     return out
 
 
-def git_info(repo_root: Path) -> dict[str, Any]:
+def git_info(
+    repo_root: Path,
+    *,
+    alias_roots: list[tuple[Path | None, str]],
+    allow_absolute_paths: bool,
+) -> dict[str, Any]:
     info: dict[str, Any] = {"is_git_repo": False}
     code, _, _ = run(["git", "rev-parse", "--is-inside-work-tree"], cwd=repo_root)
     if code != 0:
         return info
     info["is_git_repo"] = True
-    info["repo_root"] = str(repo_root)
+    info["repo_root"] = sanitize_path(
+        repo_root,
+        alias_roots=alias_roots,
+        allow_absolute_paths=allow_absolute_paths,
+    )
     for key, cmd in {
         "head": ["git", "rev-parse", "HEAD"],
         "short_head": ["git", "rev-parse", "--short", "HEAD"],
@@ -107,70 +92,27 @@ def git_info(repo_root: Path) -> dict[str, Any]:
 
 def module_versions(names: list[str]) -> dict[str, Any]:
     data: dict[str, Any] = {}
+    package_index = importlib_metadata.packages_distributions()
     for name in names:
-        try:
-            module = importlib.import_module(name)
-        except Exception as exc:
-            data[name] = {"installed": False, "error": type(exc).__name__}
-            continue
-        version = getattr(module, "__version__", None)
-        record: dict[str, Any] = {"installed": True, "version": version}
-        if name == "torch":
-            record["cuda"] = getattr(getattr(module, "version", None), "cuda", None)
+        distributions = package_index.get(name) or [name]
+        installed = False
+        record: dict[str, Any] = {"installed": False}
+        for dist_name in distributions:
             try:
-                record["cudnn_version"] = module.backends.cudnn.version()
-            except Exception:
-                record["cudnn_version"] = None
-            try:
-                record["cuda_available"] = bool(module.cuda.is_available())
-                record["device_count"] = int(module.cuda.device_count())
-            except Exception:
-                record["cuda_available"] = None
-                record["device_count"] = None
+                version = importlib_metadata.version(dist_name)
+            except importlib_metadata.PackageNotFoundError:
+                continue
+            installed = True
+            record = {
+                "installed": True,
+                "version": version,
+                "distribution": dist_name,
+            }
+            break
+        if not installed:
+            record["distribution_candidates"] = distributions
         data[name] = record
     return data
-
-
-def env_snapshot(prefixes: list[str]) -> dict[str, str]:
-    out: dict[str, str] = {}
-    for key, value in sorted(os.environ.items()):
-        if any(key.startswith(prefix) for prefix in prefixes):
-            out[key] = value
-    return out
-
-
-def path_record(path_str: str, hash_files: bool, recursive_dir_count: bool) -> dict[str, Any]:
-    path = Path(path_str).expanduser()
-    record: dict[str, Any] = {"path": str(path), "exists": path.exists()}
-    if not path.exists():
-        return record
-    stat = path.stat()
-    record["type"] = "dir" if path.is_dir() else "file"
-    record["size_bytes"] = stat.st_size
-    record["mtime_utc"] = datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat()
-    if path.is_file():
-        if hash_files:
-            record["sha256"] = sha256_file(path)
-    elif path.is_dir():
-        children = list(path.iterdir())
-        record["child_count"] = len(children)
-        if recursive_dir_count:
-            record["recursive_file_count"] = sum(1 for p in path.rglob("*") if p.is_file())
-    return record
-
-
-def pip_freeze_hash() -> dict[str, Any]:
-    code, out, err = run([sys.executable, "-m", "pip", "freeze"])
-    if code != 0:
-        return {"available": False, "error": err or "pip freeze failed"}
-    lines = sorted(line.strip() for line in out.splitlines() if line.strip())
-    digest = hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
-    return {
-        "available": True,
-        "count": len(lines),
-        "sha256": digest,
-        "sample": lines[:40],
-    }
 
 
 def gpu_snapshot() -> dict[str, Any]:
@@ -230,14 +172,6 @@ def to_markdown(payload: dict[str, Any]) -> str:
         lines.append("## Params")
         for key, value in sorted(payload["params"].items()):
             lines.append(f"- `{key}`: `{value}`")
-    if payload.get("tracked_paths"):
-        lines.append("")
-        lines.append("## Tracked Paths")
-        for item in payload["tracked_paths"]:
-            extra = ""
-            if item.get("sha256"):
-                extra = f", sha256 `{item['sha256'][:12]}`"
-            lines.append(f"- `{item['path']}` ({item.get('type', 'missing')}){extra}")
     return "\n".join(lines) + "\n"
 
 
@@ -247,25 +181,29 @@ def main() -> int:
     parser.add_argument("--out", required=True)
     parser.add_argument("--markdown-out")
     parser.add_argument("--label")
-    parser.add_argument("--path", action="append", default=[])
     parser.add_argument("--param", action="append", default=[])
     parser.add_argument("--module", action="append", default=[])
-    parser.add_argument("--env-prefix", action="append", default=[])
-    parser.add_argument("--hash-files", action="store_true", default=False)
-    parser.add_argument("--recursive-dir-count", action="store_true", default=False)
-    parser.add_argument("--skip-pip-freeze", action="store_true", default=False)
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).expanduser().resolve()
     out_path = Path(args.out).expanduser().resolve()
     md_path = Path(args.markdown_out).expanduser().resolve() if args.markdown_out else None
+    alias_roots = [(repo_root, "$REPO_ROOT")]
 
     payload: dict[str, Any] = {
         "label": args.label,
         "captured_utc": datetime.now(timezone.utc).isoformat(),
-        "cwd": str(Path.cwd()),
+        "cwd": sanitize_path(
+            Path.cwd(),
+            alias_roots=alias_roots,
+            allow_absolute_paths=False,
+        ),
         "python": {
-            "executable": sys.executable,
+            "executable": sanitize_path(
+                sys.executable,
+                alias_roots=alias_roots,
+                allow_absolute_paths=False,
+            ),
             "version": sys.version.replace("\n", " "),
         },
         "platform": {
@@ -273,17 +211,15 @@ def main() -> int:
             "machine": platform.machine(),
             "processor": platform.processor(),
         },
-        "git": git_info(repo_root),
+        "git": git_info(
+            repo_root,
+            alias_roots=alias_roots,
+            allow_absolute_paths=False,
+        ),
         "params": parse_key_value(args.param),
-        "tracked_paths": [
-            path_record(path_str, args.hash_files, args.recursive_dir_count) for path_str in args.path
-        ],
         "modules": module_versions(args.module or DEFAULT_MODULES),
-        "env": env_snapshot(args.env_prefix or DEFAULT_ENV_PREFIXES),
         "gpu": gpu_snapshot(),
     }
-    if not args.skip_pip_freeze:
-        payload["pip_freeze"] = pip_freeze_hash()
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

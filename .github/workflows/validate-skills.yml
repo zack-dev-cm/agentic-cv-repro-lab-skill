@@ -1,0 +1,50 @@
+name: Validate Skills
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Fail on tracked Python bytecode
+        run: |
+          if git ls-files | grep -E '(^|/)(__pycache__/|.*\.pyc$)'; then
+            echo "Tracked Python bytecode files found"
+            exit 1
+          fi
+
+      - name: Compile bundled scripts
+        run: |
+          python -m py_compile \
+            skill/data-science-cv-repro-lab/scripts/*.py \
+            skill/sota-agent/scripts/*.py
+
+      - name: Smoke test public helpers
+        run: |
+          tmpdir="$(mktemp -d)"
+          python skill/data-science-cv-repro-lab/scripts/capture_cv_run_context.py \
+            --repo-root . \
+            --out "$tmpdir/cv-run-context.json" \
+            --markdown-out "$tmpdir/cv-run-context.md" \
+            --label ci \
+            --module pip \
+            --param lane=ci
+          python skill/data-science-cv-repro-lab/scripts/init_cv_artifact_manifest.py \
+            --out "$tmpdir/cv-artifact-manifest.json" \
+            --bundle-root skill/data-science-cv-repro-lab \
+            --item skill=skill/data-science-cv-repro-lab/SKILL.md
+          python skill/sota-agent/scripts/init_sota_artifact_manifest.py \
+            --out "$tmpdir/sota-artifact-manifest.json" \
+            --bundle-root skill/sota-agent \
+            --item skill=skill/sota-agent/SKILL.md

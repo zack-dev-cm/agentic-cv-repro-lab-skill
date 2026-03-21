@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a compact research, plan, journal, and evidence scaffold for a CV task."""
+"""Create a compact research, design, plan, verification, journal, and evidence scaffold for a CV task."""
 
 from __future__ import annotations
 
@@ -51,6 +51,12 @@ Write the product or research question here.
 ## Promotion Gate
 
 Write the benchmark and non-regression surfaces here.
+
+## Release Surface
+
+- semantic benchmark
+- runtime or service benchmark
+- user-facing product surface
 """
 
     research = f"""# Research
@@ -71,6 +77,22 @@ Write the benchmark and non-regression surfaces here.
 ## Constraints
 
 - note blockers, environment assumptions, browser assets, VM assets, and missing data
+"""
+
+    design = """# Design
+
+## Candidate Change
+
+- what is changing
+
+## Why This Change
+
+- why the current baseline is insufficient
+
+## Risk Review
+
+- likely regressions
+- rollback trigger
 """
 
     plan = """# Plan
@@ -96,6 +118,26 @@ Write the benchmark and non-regression surfaces here.
 - what would make this line of work fail fast
 """
 
+    verification = """# Verification
+
+## Smoke Checks
+
+- preview audit
+- tiny subset run
+- short resumed run
+
+## Release Gates
+
+- semantic benchmark
+- runtime or service check
+- product-surface review
+
+## Rollback Plan
+
+- baseline to restore
+- conditions that force rollback
+"""
+
     journal = """# Journal
 
 ## Timeline
@@ -112,11 +154,16 @@ Write the benchmark and non-regression surfaces here.
 ## Browser And Notebook Evidence
 
 - screenshots
+- validation scorecard
 - exported artifact manifest
 
 ## Outputs
 
 - output paths
+
+## Promotion Bundle
+
+- merged release artifact paths
 
 ## Risks
 
@@ -152,7 +199,9 @@ Write the benchmark and non-regression surfaces here.
     files = {
         "README.md": readme,
         "research.md": research,
+        "design.md": design,
         "plan.md": plan,
+        "verification.md": verification,
         "journal.md": journal,
         "evidence.md": evidence,
         "promotion.md": promotion,

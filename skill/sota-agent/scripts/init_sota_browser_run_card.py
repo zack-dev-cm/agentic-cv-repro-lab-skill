@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a sanitized browser run card skeleton for notebook-style UI work."""
+"""Create a sanitized browser run card skeleton for notebook-style SOTA work."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from cv_public_safety import sanitize_url
+from sota_public_safety import sanitize_url
 
 
 def main() -> int:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a machine-readable artifact manifest for a CV export bundle."""
+"""Create a machine-readable artifact manifest for a SOTA export bundle."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from cv_public_safety import sanitize_path
+from sota_public_safety import sanitize_path
 
 
 def path_record(

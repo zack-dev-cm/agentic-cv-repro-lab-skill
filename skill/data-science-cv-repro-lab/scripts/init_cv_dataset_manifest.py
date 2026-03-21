@@ -8,6 +8,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from cv_public_safety import sanitize_path
+
 
 def parse_key_value(items: list[str]) -> dict[str, str]:
     out: dict[str, str] = {}
@@ -40,7 +42,7 @@ def main() -> int:
         "dataset_id": args.dataset_id,
         "version": args.version,
         "sources": {
-            "source_roots": args.source_root,
+            "source_roots": [sanitize_path(path, allow_absolute_paths=False) for path in args.source_root],
             "download_url": "",
             "local_cache_root": "",
         },
@@ -60,6 +62,7 @@ def main() -> int:
         "artifacts": {
             "preview_paths": [],
             "manifest_owner": "",
+            "public_safe": True,
         },
         "notes": [],
     }

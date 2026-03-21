@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a machine-readable bootstrap manifest for a long CV VM run."""
+"""Create a machine-readable bootstrap manifest for a long SOTA VM run."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from cv_public_safety import (
+from sota_public_safety import (
     is_absolute_like,
     sanitize_command_tokens,
     sanitize_path,
