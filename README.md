@@ -1,4 +1,4 @@
-# Agentic CV Repro Lab Skills
+# CV Repro Lab Skills
 
 **Benchmark-gated CV skills for execution lanes and SOTA campaigns.**
 
@@ -13,9 +13,9 @@ evidence needed to promote or reject a result.
 
 ## Live Packages
 
-- [Agentic CV Repro Lab on ClawHub](https://clawhub.ai/zack-dev-cm/data-science-cv-repro-lab) (`v1.9.0`)
-- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.4.0`)
-- [Portfolio entry](https://zack-dev-cm.github.io/projects/agentic-cv-repro-lab-skill.md)
+- [CV Repro Lab on ClawHub](https://clawhub.ai/zack-dev-cm/data-science-cv-repro-lab) (`v1.9.1`)
+- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.4.1`)
+- [Portfolio entry](https://zack-dev-cm.github.io/projects/cv-repro-lab-skills.md)
 
 ## Quick Start
 
@@ -33,7 +33,7 @@ rsync -a skill/sota-agent/ "$CODEX_HOME/skills/sota-agent/"
 - added a review-dashboard manifest for synced QA runs, benchmark panels, runtime sweeps, and audit surfaces
 - expanded run cards and candidate/program records with reruns, slices, agent threads, and auth policy
 - added explicit dashboard, source-audit, and leakage-audit references to the SOTA claim surface
-- added public-safe summary rendering for the richer machine-readable records
+- added redacted public summary rendering for the richer machine-readable records
 - made OAuth-backed ChatGPT/Codex paths the default public story instead of API-key-first tooling
 
 ## When To Use Which Skill

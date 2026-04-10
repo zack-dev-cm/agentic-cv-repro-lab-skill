@@ -213,15 +213,15 @@ Read only the reference that matches the task:
 - `scripts/init_sota_validation_scorecard.py`
   - Create a machine-readable GUI or notebook validation scorecard when visible state matters to the campaign.
 - `scripts/init_sota_artifact_manifest.py`
-  - Create a machine-readable export-bundle manifest for notebook or VM artifact pulls with public-safe path metadata.
+  - Create a machine-readable export-bundle manifest for notebook or VM artifact pulls with redacted public path metadata.
 - `scripts/init_sota_candidate_card.py`
   - Create a machine-readable card for a serious candidate, its execution lane, auth mode, and claim state.
 - `scripts/init_sota_candidate.py`
-  - Create a machine-readable candidate record with change set, risks, and public-safe artifact refs.
+  - Create a machine-readable candidate record with change set, risks, and redacted public artifact refs.
 - `scripts/init_sota_ablation_queue.py`
   - Create a focused ablation queue for one candidate family.
 - `scripts/init_sota_vm_bootstrap_manifest.py`
-  - Create a machine-readable bootstrap manifest for long GPU VM or cluster runs with public-safe redaction.
+  - Create a machine-readable bootstrap manifest for long GPU VM or cluster runs with public-release redaction.
 - `scripts/update_sota_scoreboard.py`
   - Refresh a ranked scoreboard for a fixed metric and goal direction.
 - `scripts/init_sota_review_packet.py`

@@ -180,7 +180,7 @@ through `sota-agent` and use this skill as the execution lane.
 - Prefer a machine-readable run card plus a short markdown summary.
 - Initialize that run card before or at launch time so later steps append to one canonical record.
 - Render the markdown summary from the run card instead of hand-writing it when possible.
-- Keep the default public-safe markdown rendering in place.
+- Keep the default redacted-public markdown rendering in place.
 
 ### Public distribution rules
 
@@ -231,10 +231,10 @@ Read only the reference that matches the task:
 - `scripts/init_cv_validation_scorecard.py`
   - Create a machine-readable pre-training QA scorecard for browser or notebook hypothesis checks.
 - `scripts/render_cv_run_summary.py`
-  - Render a concise markdown release summary from the machine-readable run card with public-safe redaction.
+  - Render a concise markdown release summary from the machine-readable run card with public-release redaction.
 - `scripts/init_cv_artifact_manifest.py`
-  - Create a machine-readable export-bundle manifest for Colab, Kaggle, or VM artifact pulls with public-safe path metadata.
+  - Create a machine-readable export-bundle manifest for Colab, Kaggle, or VM artifact pulls with redacted public path metadata.
 - `scripts/init_cv_vm_bootstrap_manifest.py`
-  - Create a machine-readable bootstrap manifest for long VM or cluster training runs with public-safe command redaction.
+  - Create a machine-readable bootstrap manifest for long VM or cluster training runs with public-release command redaction.
 - `scripts/init_cv_promotion_bundle.py`
   - Create one promotion entry point that joins semantic, runtime, browser, and product-surface evidence.
