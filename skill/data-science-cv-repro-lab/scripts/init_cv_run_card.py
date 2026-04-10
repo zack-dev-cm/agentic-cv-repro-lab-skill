@@ -52,6 +52,17 @@ def main() -> int:
             "export_path": "",
             "config_summary": {},
         },
+        "harness": {
+            "harness_path": "",
+            "contract_id": "",
+            "search_method": "",
+            "failure_taxonomy_path": "",
+            "review_set_path": "",
+            "oauth_mode": "chatgpt_or_codex_oauth",
+            "slice_metrics": {},
+            "reruns": [],
+            "agent_threads": [],
+        },
         "browser_lane": {
             "used": False,
             "tool": "",

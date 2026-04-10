@@ -124,6 +124,34 @@ def render_training(lines: list[str], training: dict[str, Any], *, allow_private
     lines.append("")
 
 
+def render_harness(lines: list[str], harness: dict[str, Any], *, allow_private_details: bool) -> None:
+    if not harness:
+        return
+    lines.append("## Harness")
+    for key in (
+        "harness_path",
+        "contract_id",
+        "search_method",
+        "failure_taxonomy_path",
+        "review_set_path",
+        "oauth_mode",
+    ):
+        add_field(lines, key, harness.get(key), allow_private_details=allow_private_details)
+    slice_metrics = harness.get("slice_metrics") or {}
+    if slice_metrics:
+        lines.append(f"- slice_count: `{len(slice_metrics)}`")
+        for name in sorted(slice_metrics)[:10]:
+            value = display_value(slice_metrics[name], allow_private_details=allow_private_details)
+            lines.append(f"- slice_metric[{name}]: `{value}`")
+    reruns = harness.get("reruns") or []
+    if reruns:
+        lines.append(f"- rerun_records: `{len(reruns)}`")
+    agent_threads = harness.get("agent_threads") or []
+    if agent_threads:
+        lines.append(f"- agent_threads: `{len(agent_threads)}`")
+    lines.append("")
+
+
 def render_evaluation(lines: list[str], evaluation: dict[str, Any], *, allow_private_details: bool) -> None:
     lines.append("## Evaluation")
     for key in (
@@ -183,6 +211,7 @@ def main() -> int:
     lines.append("")
 
     render_training(lines, payload.get("training") or {}, allow_private_details=False)
+    render_harness(lines, payload.get("harness") or {}, allow_private_details=False)
     render_browser(lines, payload.get("browser_lane") or {}, allow_private_details=False)
     render_evaluation(lines, payload.get("evaluation") or {}, allow_private_details=False)
 

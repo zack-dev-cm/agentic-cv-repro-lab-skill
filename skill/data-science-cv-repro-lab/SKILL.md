@@ -19,6 +19,10 @@ Turn CV work into a reproducible decision loop:
 - long-run health monitoring
 - promotion only on verified benchmark wins
 
+This skill is the execution and evidence layer, not the full score-improvement stack.
+If the real ask is "beat the baseline", "escape a plateau", or "find a better recipe",
+pair it with `sota-agent` and a fixed improvement harness before spending more compute.
+
 ## Use This Skill When
 
 - the user asks to debug CV training, segmentation, detection, or runtime behavior
@@ -27,6 +31,9 @@ Turn CV work into a reproducible decision loop:
 - the task requires checkpoint comparisons, export comparisons, or promotion gating
 - the user wants VM or GPU watchdog logic, heartbeat files, or auto-stop behavior
 - the user wants a general third-party CV workflow, not only repo-specific advice
+
+If the primary goal is benchmark improvement rather than clean execution, route the search loop
+through `sota-agent` and use this skill as the execution lane.
 
 ## Quick Start
 
@@ -39,6 +46,7 @@ Turn CV work into a reproducible decision loop:
 2. Initialize the durable records immediately.
    - Use `python3 {baseDir}/scripts/init_cv_dataset_manifest.py --out <json> --dataset-id <id>`.
    - Use `python3 {baseDir}/scripts/init_cv_run_card.py --out <json> --candidate-id <id> --task-id <task> --baseline-id <baseline>`.
+   - If the task is plateau recovery or benchmark improvement, use `python3 {baseDir}/scripts/init_cv_improvement_harness.py --out <json> --task-id <task> --candidate-family <family>`.
    - If a browser lane matters, use `python3 {baseDir}/scripts/init_cv_browser_run_card.py --out <json> --target-url <url>`.
    - If browser-visible overlays or prompt variants are part of the hypothesis, use `python3 {baseDir}/scripts/init_cv_validation_scorecard.py --out <json> --scorecard-id <id> --surface <surface>`.
    - If a long VM run is involved, use `python3 {baseDir}/scripts/init_cv_vm_bootstrap_manifest.py --out <json> --output-root <run_root> --model-family <name> --command python train.py --epochs 40`.
@@ -56,15 +64,20 @@ Turn CV work into a reproducible decision loop:
    - Promotion lane: fixed benchmark matrix plus customer-facing surface checks.
 
 5. Work the debug ladder in order.
+   - `Harness review`: fixed split, primary metric, slice table, rerun rule, and stop condition.
    - `Validation scorecard`: browser or notebook visual QA with per-image pass or fail notes when the UI is part of the release story.
    - `Data audit`: split integrity, label normalization, image-mask pairing, resize geometry.
    - `Preview audit`: at least one augmentation preview and one transformed batch preview.
+   - `Failure-set review`: keep 20-50 representative overlays with short notes instead of trusting one scalar metric.
    - `Tiny overfit`: 4-16 shared samples with `no_aug`.
    - `Short resumed run`: continue from the best trusted checkpoint.
    - `Long run`: only after the short loop is healthy.
 
 6. Keep agentic work bounded.
    - External browser LLM output is hypothesis generation, not release evidence.
+   - Keep the main thread on the benchmark contract and improvement harness.
+   - Use bounded Codex subagents for scouting, data audits, patch proposals, and per-case review.
+   - For repeated case review, batch over a manifest or CSV instead of free-form chat drift.
    - Browser steps must emit screenshots, machine-readable scores, and explicit success markers.
    - Hard-fail on unavailable browser modes, dead CDP sessions, or ambiguous notebook state.
    - Keep planner, executor, reviewer, and promoter responsibilities distinct even if one agent performs more than one role.
@@ -74,6 +87,7 @@ Turn CV work into a reproducible decision loop:
    - Exported or runtime quality
    - User-facing render, service, or product surface
    - Runtime cost or throughput if deployment matters
+   - Adjacent-seed or rerun stability if the claimed delta is small
    - Generate a promotion bundle with `python3 {baseDir}/scripts/init_cv_promotion_bundle.py --out <json> --candidate-id <id>` before the final decision.
 
 ## Operating Rules
@@ -127,6 +141,27 @@ Turn CV work into a reproducible decision loop:
 - Save previews in the same run folder as metrics and summaries.
 - Do not compare candidates on different benchmark sets.
 
+### Plateau recovery rules
+
+- If Dice or another primary metric is stuck, freeze the benchmark contract and write the improvement harness before another long run.
+- Require per-slice metrics, a short failure taxonomy, and a rerun rule before claiming a real win.
+- Keep a small, reviewable change set for each serious candidate. If several knobs move together, mark it as a package change instead of an ablation.
+- Cut a recipe family after a few non-winning serious candidates instead of rerunning the same idea with cosmetic churn.
+
+### Derm and segmentation rules
+
+- Before architecture changes, audit mask geometry, resize policy, interpolation, empty-mask prevalence, and overlay alignment.
+- For derm or lesion segmentation, slice the benchmark by lesion size, border difficulty, artifact-heavy images, and background-dominant images.
+- Global Dice is not enough. Keep boundary-sensitive or slice-specific diagnostics so a hidden failure mode does not look like a flat plateau.
+- Preserve a 20-50 case review set with saved overlays and short reviewer notes.
+
+### Codex and auth rules
+
+- Use ChatGPT or Codex OAuth-backed sessions as the default and preferred path.
+- Prefer Codex multi-agent or app-server workflows over third-party orchestrators that require paid API keys.
+- Do not require or recommend `OPENAI_API_KEY`, other vendor API keys, or paid inference APIs as the default runtime path.
+- If a third-party framework only works through paid API keys, treat it as reference material unless you can run it fully through local tools and OAuth-backed Codex sessions.
+
 ### Promotion rules
 
 - Keep the last trusted baseline intact until the candidate clears agreed gates.
@@ -152,6 +187,8 @@ Read only the reference that matches the task:
   - Official PyTorch, Albumentations, MLflow, and DVC guidance.
 - `references/agentic-research-patterns.md`
   - How to adapt `karpathy/autoresearch` style loops to DS and CV work.
+- `references/improvement-harness-and-oauth-stack.md`
+  - What to reuse from Codex subagents, harness engineering, OpenEvolve, Symphony, Paperclip, and OptiLLM under an OAuth-only rule.
 - `references/openclaw-browser-lane.md`
   - OpenClaw, CDP, Colab, screenshot, artifact-pull, and timeout patterns.
 - `references/colab-vm-operations.md`
@@ -170,9 +207,11 @@ Read only the reference that matches the task:
 - `scripts/capture_cv_run_context.py`
   - Capture a compact git, module, GPU, and experiment-param snapshot.
 - `scripts/init_cv_task_scaffold.py`
-  - Create a reusable research, plan, journal, and evidence scaffold for a new CV task.
+  - Create a reusable research, harness, ablation, agent, plan, journal, and evidence scaffold for a new CV task.
 - `scripts/init_cv_run_card.py`
   - Create a machine-readable candidate run card for training, benchmark, and promotion evidence.
+- `scripts/init_cv_improvement_harness.py`
+  - Create a machine-readable benchmark, slice, rerun, and auth contract for plateau recovery and score-improvement work.
 - `scripts/init_cv_dataset_manifest.py`
   - Create a reusable dataset identity manifest for shared CV benchmarks and training runs.
 - `scripts/init_cv_browser_run_card.py`

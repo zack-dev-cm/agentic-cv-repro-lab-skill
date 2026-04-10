@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a compact research, design, plan, verification, journal, and evidence scaffold for a CV task."""
+"""Create a compact research, design, harness, plan, verification, journal, and evidence scaffold for a CV task."""
 
 from __future__ import annotations
 
@@ -52,6 +52,13 @@ Write the product or research question here.
 
 Write the benchmark and non-regression surfaces here.
 
+## Improvement Harness
+
+- benchmark contract
+- slice table
+- rerun rule
+- auth mode
+
 ## Release Surface
 
 - semantic benchmark
@@ -95,11 +102,49 @@ Write the benchmark and non-regression surfaces here.
 - rollback trigger
 """
 
+    harness = """# Harness
+
+## Benchmark Contract
+
+- dataset version
+- split
+- primary metric
+- non-regression surfaces
+
+## Slice Table
+
+- slice name
+- why it matters
+- metric
+
+## Failure Taxonomy
+
+- bucket
+- definition
+- representative cases
+
+## Rerun Rule
+
+- when an adjacent-seed rerun is required
+- acceptance rule
+
+## Auth Rule
+
+- ChatGPT or Codex OAuth only
+- no paid API keys by default
+"""
+
     plan = """# Plan
 
 ## Hypotheses
 
 - hypothesis 1
+
+## Subagents
+
+- scout
+- executor
+- reviewer
 
 ## Infra Plan
 
@@ -118,6 +163,33 @@ Write the benchmark and non-regression surfaces here.
 - what would make this line of work fail fast
 """
 
+    ablations = """# Ablations
+
+## Queue
+
+- candidate id, one-line change, expected win surface
+
+## Rules
+
+- one meaningful change at a time
+- mark package changes explicitly
+- kill low-information branches quickly
+"""
+
+    agents = """# Agents
+
+## Main Thread
+
+- benchmark contract
+- final decision
+
+## Bounded Subagents
+
+- scout: literature, prior runs, external repos
+- executor: bounded code or config changes
+- reviewer: hard-case audit, regressions, artifact completeness
+"""
+
     verification = """# Verification
 
 ## Smoke Checks
@@ -125,6 +197,7 @@ Write the benchmark and non-regression surfaces here.
 - preview audit
 - tiny subset run
 - short resumed run
+- adjacent-seed rerun when needed
 
 ## Release Gates
 
@@ -200,7 +273,10 @@ Write the benchmark and non-regression surfaces here.
         "README.md": readme,
         "research.md": research,
         "design.md": design,
+        "harness.md": harness,
         "plan.md": plan,
+        "ablations.md": ablations,
+        "agents.md": agents,
         "verification.md": verification,
         "journal.md": journal,
         "evidence.md": evidence,
