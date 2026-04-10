@@ -47,6 +47,7 @@ through `sota-agent` and use this skill as the execution lane.
    - Use `python3 {baseDir}/scripts/init_cv_dataset_manifest.py --out <json> --dataset-id <id>`.
    - Use `python3 {baseDir}/scripts/init_cv_run_card.py --out <json> --candidate-id <id> --task-id <task> --baseline-id <baseline>`.
    - If the task is plateau recovery or benchmark improvement, use `python3 {baseDir}/scripts/init_cv_improvement_harness.py --out <json> --task-id <task> --candidate-family <family>`.
+   - If the workflow mixes runtime sweeps, QA runs, benchmark panels, or synced VM artifacts, use `python3 {baseDir}/scripts/init_cv_review_dashboard_manifest.py --out <json> --dashboard-id <id> --title <title>`.
    - If a browser lane matters, use `python3 {baseDir}/scripts/init_cv_browser_run_card.py --out <json> --target-url <url>`.
    - If browser-visible overlays or prompt variants are part of the hypothesis, use `python3 {baseDir}/scripts/init_cv_validation_scorecard.py --out <json> --scorecard-id <id> --surface <surface>`.
    - If a long VM run is involved, use `python3 {baseDir}/scripts/init_cv_vm_bootstrap_manifest.py --out <json> --output-root <run_root> --model-family <name> --command python train.py --epochs 40`.
@@ -61,6 +62,7 @@ through `sota-agent` and use this skill as the execution lane.
    - Browser notebook lane: Colab or Kaggle steps that must happen in a real browser or notebook UI.
    - Colab GPU lane: runtime selection, smoke validation, artifact export, and browser evidence.
    - Custom VM or cluster lane: long runs with heartbeats, watchdogs, stall detection, sync, and auto-stop.
+   - Review dashboard lane: one local or synced surface for runtime sweeps, QA runs, curated comparisons, and benchmark panels.
    - Promotion lane: fixed benchmark matrix plus customer-facing surface checks.
 
 5. Work the debug ladder in order.
@@ -133,6 +135,14 @@ through `sota-agent` and use this skill as the execution lane.
 - Track GPU utilization, epoch movement, and log freshness.
 - Sync summaries and checkpoints back to local storage on a schedule.
 - Auto-stop or downgrade to a debug path when the run is clearly unhealthy.
+
+### Review dashboard rules
+
+- Use one review dashboard manifest when the program spans runtime sweeps, QA runs, benchmark panels, and synced VM artifacts.
+- Track summary roots, benchmark roots, allowed roots, and sync targets explicitly instead of relying on memory.
+- Keep source-audit, leakage-audit, progress-snapshot, and comparison-summary paths next to the dashboard manifest.
+- Count runtime groups, QA runs, curated comparisons, and benchmark panels so the review surface stays legible as the program grows.
+- Promote from synced artifacts and run cards, not from a live dashboard alone.
 
 ### CV training rules
 
@@ -212,6 +222,8 @@ Read only the reference that matches the task:
   - Create a machine-readable candidate run card for training, benchmark, and promotion evidence.
 - `scripts/init_cv_improvement_harness.py`
   - Create a machine-readable benchmark, slice, rerun, and auth contract for plateau recovery and score-improvement work.
+- `scripts/init_cv_review_dashboard_manifest.py`
+  - Create a machine-readable review dashboard manifest for runtime sweeps, QA runs, benchmark panels, sync targets, and audit surfaces.
 - `scripts/init_cv_dataset_manifest.py`
   - Create a reusable dataset identity manifest for shared CV benchmarks and training runs.
 - `scripts/init_cv_browser_run_card.py`

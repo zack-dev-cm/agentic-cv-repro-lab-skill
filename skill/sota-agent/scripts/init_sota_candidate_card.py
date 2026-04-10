@@ -22,7 +22,7 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     payload = {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "campaign_id": args.campaign_id,
         "candidate_id": args.candidate_id,
@@ -49,6 +49,8 @@ def main() -> int:
             "reruns": [],
             "failure_cases": [],
             "regression_notes": [],
+            "review_dashboard_path": "",
+            "claim_safety_paths": [],
             "review_packet_path": "",
         },
         "claim_review": {

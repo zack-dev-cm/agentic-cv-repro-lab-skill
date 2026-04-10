@@ -21,7 +21,7 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     payload = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "task_id": args.task_id,
         "candidate_id": args.candidate_id,
@@ -51,6 +51,12 @@ def main() -> int:
             "checkpoint_path": "",
             "export_path": "",
             "config_summary": {},
+        },
+        "review_dashboard": {
+            "dashboard_manifest_path": "",
+            "headline": "",
+            "status": "",
+            "notes": [],
         },
         "harness": {
             "harness_path": "",

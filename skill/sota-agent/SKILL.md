@@ -50,6 +50,7 @@ then use `data-science-cv-repro-lab` as the execution lane.
    - Use `python3 {baseDir}/scripts/init_sota_paper_triage.py --out <json> --campaign-id <id> --task <task>`.
    - Use `python3 {baseDir}/scripts/init_sota_program.py --out <json> --campaign-id <id> --task <task> --dataset <dataset> --metric <metric> --split <split>` when you need one machine-readable benchmark, rerun, delegation, and auth plan.
    - Use `python3 {baseDir}/scripts/init_sota_candidate_card.py --out <json> --candidate-id <id> --campaign-id <id> --objective <goal>`.
+   - If execution review depends on synced QA runs, runtime sweeps, or benchmark panels, store the paired `data-science-cv-repro-lab` review dashboard path in the program and candidate records before the claim review starts.
    - If the execution path depends on a real browser or notebook UI, use `python3 {baseDir}/scripts/init_sota_browser_run_card.py --out <json> --target-url <url>`.
    - If the browser or notebook surface needs manual or visual QA, use `python3 {baseDir}/scripts/init_sota_validation_scorecard.py --out <json> --scorecard-id <id> --surface <surface>`.
    - If a Colab, Kaggle, or notebook export bundle matters, use `python3 {baseDir}/scripts/init_sota_artifact_manifest.py --out <json> --bundle-root <dir>`.
@@ -165,6 +166,7 @@ then use `data-science-cv-repro-lab` as the execution lane.
 
 - No SOTA claim without a fixed metric, split, and baseline.
 - No SOTA claim on a contaminated benchmark or hidden train-on-test path.
+- If the execution story depends on a dashboard or synced review surface, keep the dashboard path, source audit, and leakage audit in the claim packet.
 - If a candidate wins only on one slice while regressing important surfaces, hold it.
 - Report uncertainty honestly: "best internal result so far" is not the same as "new SOTA".
 - Small deltas need rerun or adjacent-seed support before they become claim language.

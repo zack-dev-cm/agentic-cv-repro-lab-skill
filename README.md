@@ -13,8 +13,8 @@ evidence needed to promote or reject a result.
 
 ## Live Packages
 
-- [Agentic CV Repro Lab on ClawHub](https://clawhub.ai/zack-dev-cm/data-science-cv-repro-lab) (`v1.8.0`)
-- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.3.0`)
+- [Agentic CV Repro Lab on ClawHub](https://clawhub.ai/zack-dev-cm/data-science-cv-repro-lab) (`v1.9.0`)
+- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.4.0`)
 - [Portfolio entry](https://zack-dev-cm.github.io/projects/agentic-cv-repro-lab-skill.md)
 
 ## Quick Start
@@ -30,7 +30,9 @@ rsync -a skill/sota-agent/ "$CODEX_HOME/skills/sota-agent/"
 ## What Changed In This Release
 
 - added an explicit improvement harness for plateau recovery and score-improvement work
+- added a review-dashboard manifest for synced QA runs, benchmark panels, runtime sweeps, and audit surfaces
 - expanded run cards and candidate/program records with reruns, slices, agent threads, and auth policy
+- added explicit dashboard, source-audit, and leakage-audit references to the SOTA claim surface
 - added public-safe summary rendering for the richer machine-readable records
 - made OAuth-backed ChatGPT/Codex paths the default public story instead of API-key-first tooling
 
@@ -87,6 +89,11 @@ python3 skill/data-science-cv-repro-lab/scripts/init_cv_improvement_harness.py \
   --out /tmp/cv-harness.json \
   --task-id demo \
   --candidate-family baseline-recovery
+
+python3 skill/data-science-cv-repro-lab/scripts/init_cv_review_dashboard_manifest.py \
+  --out /tmp/cv-dashboard.json \
+  --dashboard-id demo-dashboard \
+  --title "Demo review dashboard"
 
 python3 skill/sota-agent/scripts/init_sota_program.py \
   --out /tmp/sota-program.json \

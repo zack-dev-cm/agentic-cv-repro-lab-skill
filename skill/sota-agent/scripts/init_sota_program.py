@@ -67,7 +67,7 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     payload = {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "program_id": program_id,
         "problem": problem,
@@ -114,6 +114,19 @@ def main() -> int:
             "research_backlog": [],
             "prove_it": [],
             "promotion": [],
+        },
+        "review_surfaces": {
+            "execution_dashboard_path": "",
+            "runtime_summary_paths": [],
+            "qa_summary_paths": [],
+            "benchmark_panel_roots": [],
+            "curated_cases": [],
+        },
+        "claim_safety": {
+            "source_audit_paths": [],
+            "leakage_audit_paths": [],
+            "contamination_status": "",
+            "notes": "",
         },
         "artifacts": {
             "program_summary_path": "",

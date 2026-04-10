@@ -18,6 +18,18 @@ def load_json(path: Path) -> dict[str, Any]:
     return data
 
 
+def maybe_load_json(path_str: str) -> dict[str, Any] | None:
+    if not path_str.strip():
+        return None
+    path = Path(path_str).expanduser().resolve()
+    try:
+        return load_json(path)
+    except OSError:
+        return None
+    except json.JSONDecodeError:
+        return None
+
+
 def display_value(value: Any, *, allow_private_details: bool) -> Any:
     if allow_private_details or not isinstance(value, str):
         return value
@@ -124,6 +136,79 @@ def render_training(lines: list[str], training: dict[str, Any], *, allow_private
     lines.append("")
 
 
+def render_review_dashboard(lines: list[str], review_dashboard: dict[str, Any], *, allow_private_details: bool) -> None:
+    if not review_dashboard:
+        return
+    lines.append("## Review Dashboard")
+    for key in ("dashboard_manifest_path", "headline", "status"):
+        add_field(lines, key, review_dashboard.get(key), allow_private_details=allow_private_details)
+    for note in review_dashboard.get("notes") or []:
+        lines.append(f"- dashboard_note: `{display_value(note, allow_private_details=allow_private_details)}`")
+
+    manifest = maybe_load_json(str(review_dashboard.get("dashboard_manifest_path") or ""))
+    if manifest:
+        server = manifest.get("server") or {}
+        surfaces = manifest.get("surfaces") or {}
+        counts = manifest.get("observed_counts") or {}
+        audits = manifest.get("audits") or {}
+        decision = manifest.get("decision") or {}
+
+        add_field(lines, "dashboard_url", server.get("dashboard_url"), allow_private_details=allow_private_details)
+        add_field(lines, "dashboard_port", server.get("port"), allow_private_details=allow_private_details)
+        add_field(lines, "dashboard_server_status", server.get("status"), allow_private_details=allow_private_details)
+
+        for key in ("summary_roots", "benchmark_roots", "allowed_roots"):
+            values = surfaces.get(key) or []
+            if values:
+                lines.append(f"- {key}: `{len(values)}`")
+
+        for key in (
+            "runtime_groups",
+            "runtime_runs",
+            "qa_runs",
+            "curated_comparisons",
+            "benchmark_panels",
+            "tracked_datasets",
+        ):
+            add_field(lines, key, counts.get(key), allow_private_details=allow_private_details)
+
+        sync_targets = manifest.get("sync_targets") or []
+        if sync_targets:
+            lines.append(f"- sync_targets: `{len(sync_targets)}`")
+            for target in sync_targets[:10]:
+                if not isinstance(target, dict):
+                    continue
+                name = str(target.get("name") or "").strip()
+                status = str(target.get("status") or "").strip()
+                auto_sync = target.get("auto_sync_minutes")
+                parts = [part for part in (name, status) if part]
+                if auto_sync:
+                    parts.append(f"every {auto_sync}m")
+                if parts:
+                    lines.append(f"- sync_target: `{' | '.join(parts)}`")
+
+        for key in (
+            "progress_snapshot_paths",
+            "comparison_summary_paths",
+            "source_audit_paths",
+            "leakage_audit_paths",
+            "eda_report_paths",
+            "overfit_summary_paths",
+        ):
+            values = audits.get(key) or []
+            if values:
+                lines.append(f"- {key}: `{len(values)}`")
+
+        curated_samples = manifest.get("curated_samples") or []
+        if curated_samples:
+            lines.append(f"- curated_samples: `{len(curated_samples)}`")
+
+        add_field(lines, "dashboard_decision", decision.get("status"), allow_private_details=allow_private_details)
+        add_field(lines, "dashboard_reason", decision.get("reason"), allow_private_details=allow_private_details)
+
+    lines.append("")
+
+
 def render_harness(lines: list[str], harness: dict[str, Any], *, allow_private_details: bool) -> None:
     if not harness:
         return
@@ -211,6 +296,7 @@ def main() -> int:
     lines.append("")
 
     render_training(lines, payload.get("training") or {}, allow_private_details=False)
+    render_review_dashboard(lines, payload.get("review_dashboard") or {}, allow_private_details=False)
     render_harness(lines, payload.get("harness") or {}, allow_private_details=False)
     render_browser(lines, payload.get("browser_lane") or {}, allow_private_details=False)
     render_evaluation(lines, payload.get("evaluation") or {}, allow_private_details=False)

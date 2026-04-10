@@ -112,6 +112,31 @@ def main() -> int:
         add_field(lines, "acceptance_rule", rerun_policy.get("acceptance_rule"))
         lines.append("")
 
+    review_surfaces = program.get("review_surfaces") or {}
+    if review_surfaces:
+        lines.append("## Review Surfaces")
+        add_field(lines, "execution_dashboard_path", review_surfaces.get("execution_dashboard_path"))
+        for item in review_surfaces.get("runtime_summary_paths") or []:
+            add_field(lines, "runtime_summary_path", item)
+        for item in review_surfaces.get("qa_summary_paths") or []:
+            add_field(lines, "qa_summary_path", item)
+        for item in review_surfaces.get("benchmark_panel_roots") or []:
+            add_field(lines, "benchmark_panel_root", item)
+        for item in review_surfaces.get("curated_cases") or []:
+            add_field(lines, "curated_case", item)
+        lines.append("")
+
+    claim_safety = program.get("claim_safety") or {}
+    if claim_safety:
+        lines.append("## Claim Safety")
+        for item in claim_safety.get("source_audit_paths") or []:
+            add_field(lines, "source_audit_path", item)
+        for item in claim_safety.get("leakage_audit_paths") or []:
+            add_field(lines, "leakage_audit_path", item)
+        add_field(lines, "contamination_status", claim_safety.get("contamination_status"))
+        add_field(lines, "claim_safety_notes", claim_safety.get("notes"))
+        lines.append("")
+
     if candidate:
         lines.append("## Candidate")
         add_field(lines, "candidate_id", candidate.get("candidate_id"))
@@ -141,6 +166,8 @@ def main() -> int:
         add_field(lines, "delta_vs_baseline", evaluation.get("delta_vs_baseline"))
         add_field(lines, "slice_scores", evaluation.get("slice_scores"))
         add_field(lines, "reruns", evaluation.get("reruns"))
+        add_field(lines, "review_dashboard_path", evaluation.get("review_dashboard_path"))
+        add_field(lines, "claim_safety_paths", evaluation.get("claim_safety_paths"))
         add_field(lines, "review_packet_path", evaluation.get("review_packet_path"))
         lines.append("")
 
