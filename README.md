@@ -1,42 +1,18 @@
 # CV Repro Lab Skills
 
-**Benchmark-gated CV skills for execution lanes and SOTA campaigns.**
+**Run CV experiments reproducibly across Colab, Kaggle, browser workflows, and GPU VMs, then decide whether a result is strong enough to promote.**
 
-Two public OpenClaw/Codex skills for CV and data-science experimentation:
+CV Repro Lab Skills packages two public OpenClaw/Codex skills:
 
-- `data-science-cv-repro-lab`: execution lane for browser evidence, Colab/Kaggle runs, VM runs, and promotion bundles
-- `sota-agent`: benchmark lane for paper triage, candidate ranking, ablation discipline, and claim review
+- `data-science-cv-repro-lab`: run experiments, capture browser and notebook evidence, and bundle results for review
+- `sota-agent`: define the benchmark, rank candidates, and decide whether a claimed gain is real
 
-Use both together when the real task is plateau recovery or a benchmark push: `sota-agent` freezes the
-campaign contract and ranks candidates; `data-science-cv-repro-lab` executes the runs and captures the
-evidence needed to promote or reject a result.
+Use both together when you want one planning lane and one execution lane:
 
-## Live Packages
+- `sota-agent` freezes the benchmark, candidate list, rerun policy, and claim rules before more compute gets spent
+- `data-science-cv-repro-lab` executes runs across Colab, Kaggle, browser-heavy workflows, or VMs and captures the evidence needed to promote or reject the result
 
-- [CV Repro Lab on ClawHub](https://clawhub.ai/zack-dev-cm/data-science-cv-repro-lab) (`v1.9.1`)
-- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.4.1`)
-- [Portfolio entry](https://zack-dev-cm.github.io/projects/cv-repro-lab-skills.md)
-
-## Quick Start
-
-Install from ClawHub or copy the skill folders into `$CODEX_HOME/skills/`.
-
-```bash
-mkdir -p "$CODEX_HOME/skills"
-rsync -a skill/data-science-cv-repro-lab/ "$CODEX_HOME/skills/data-science-cv-repro-lab/"
-rsync -a skill/sota-agent/ "$CODEX_HOME/skills/sota-agent/"
-```
-
-## What Changed In This Release
-
-- added an explicit improvement harness for plateau recovery and score-improvement work
-- added a review-dashboard manifest for synced QA runs, benchmark panels, runtime sweeps, and audit surfaces
-- expanded run cards and candidate/program records with reruns, slices, agent threads, and auth policy
-- added explicit dashboard, source-audit, and leakage-audit references to the SOTA claim surface
-- added redacted public summary rendering for the richer machine-readable records
-- made OAuth-backed ChatGPT/Codex paths the default public story instead of API-key-first tooling
-
-## When To Use Which Skill
+## Which Skill Should I Use?
 
 ### `data-science-cv-repro-lab`
 
@@ -51,10 +27,35 @@ Use it when you need:
 
 Use it when you need:
 
-- a fixed benchmark contract before spending more compute
+- a fixed benchmark before spending more compute
 - literature triage and candidate ranking
 - ablation discipline and rerun policy for small deltas
 - an honest claim decision instead of benchmark theater
+
+## Quick Start
+
+Install from ClawHub or copy the skill folders into `$CODEX_HOME/skills/`.
+
+```bash
+mkdir -p "$CODEX_HOME/skills"
+rsync -a skill/data-science-cv-repro-lab/ "$CODEX_HOME/skills/data-science-cv-repro-lab/"
+rsync -a skill/sota-agent/ "$CODEX_HOME/skills/sota-agent/"
+```
+
+## Live Packages
+
+- [CV Repro Lab on ClawHub](https://clawhub.ai/zack-dev-cm/data-science-cv-repro-lab) (`v1.9.1`)
+- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.4.1`)
+- [Portfolio entry](https://zack-dev-cm.github.io/projects/cv-repro-lab-skills.md)
+
+## What Changed In This Release
+
+- added an explicit improvement harness for plateau recovery and score-improvement work
+- added a review-dashboard manifest for synced QA runs, benchmark panels, runtime sweeps, and audit surfaces
+- expanded run cards and candidate/program records with reruns, slices, agent threads, and auth policy
+- added explicit dashboard, source-audit, and leakage-audit references to the SOTA claim surface
+- added redacted public summary rendering for the richer machine-readable records
+- made OAuth-backed ChatGPT/Codex paths the default public story instead of API-key-first tooling
 
 ## Good Public Fit
 
