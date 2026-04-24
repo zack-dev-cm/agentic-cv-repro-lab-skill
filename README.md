@@ -79,6 +79,8 @@ ClawHub is public. Keep the published skill bundles free of:
 
 Private specializations should stay in local override skills, not in the public package.
 
+Report security issues privately using the contact path in [SECURITY.md](SECURITY.md) instead of filing a public issue with sensitive details.
+
 ## Local Validation
 
 ```bash

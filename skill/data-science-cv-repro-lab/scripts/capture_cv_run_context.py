@@ -13,7 +13,7 @@ from importlib import metadata as importlib_metadata
 from pathlib import Path
 from typing import Any
 
-from cv_public_safety import sanitize_path
+from cv_public_safety import sanitize_metadata_map, sanitize_path
 
 
 DEFAULT_MODULES = [
@@ -32,6 +32,7 @@ DEFAULT_MODULES = [
     "wandb",
     "mlflow",
 ]
+PUBLIC_BRANCH_NAMES = {"main", "master", "develop", "dev", "trunk", "release"}
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
     try:
@@ -57,6 +58,26 @@ def parse_key_value(items: list[str]) -> dict[str, str]:
     return out
 
 
+def sanitize_git_branch_name(branch: str) -> str | None:
+    branch = branch.strip()
+    if not branch:
+        return None
+    if branch == "HEAD" or branch in PUBLIC_BRANCH_NAMES:
+        return branch
+    return "<redacted:branch>"
+
+
+def sanitize_git_status_line(line: str) -> str:
+    line = line.rstrip()
+    if not line:
+        return ""
+    prefix = line[:2]
+    bucket = "<untracked-path>" if prefix == "??" else "<tracked-path>"
+    if prefix.strip():
+        return f"{prefix} {bucket}"
+    return bucket
+
+
 def git_info(
     repo_root: Path,
     *,
@@ -80,11 +101,14 @@ def git_info(
         "describe": ["git", "describe", "--always", "--dirty", "--tags"],
     }.items():
         _, out, _ = run(cmd, cwd=repo_root)
-        info[key] = out or None
+        if key == "branch":
+            info[key] = sanitize_git_branch_name(out)
+        else:
+            info[key] = out or None
     _, status_out, _ = run(["git", "status", "--short"], cwd=repo_root)
     status_lines = [line for line in status_out.splitlines() if line.strip()]
     info["dirty"] = bool(status_lines)
-    info["status_short"] = status_lines[:200]
+    info["status_short"] = [sanitize_git_status_line(line) for line in status_lines[:200]]
     info["modified_count"] = sum(1 for line in status_lines if not line.startswith("??"))
     info["untracked_count"] = sum(1 for line in status_lines if line.startswith("??"))
     return info
@@ -216,7 +240,11 @@ def main() -> int:
             alias_roots=alias_roots,
             allow_absolute_paths=False,
         ),
-        "params": parse_key_value(args.param),
+        "params": sanitize_metadata_map(
+            parse_key_value(args.param),
+            alias_roots=alias_roots,
+            allow_absolute_paths=False,
+        ),
         "modules": module_versions(args.module or DEFAULT_MODULES),
         "gpu": gpu_snapshot(),
     }

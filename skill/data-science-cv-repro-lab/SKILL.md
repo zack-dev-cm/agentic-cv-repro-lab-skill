@@ -1,12 +1,15 @@
 ---
 name: data-science-cv-repro-lab
-description: Public ClawHub skill for execution-grade CV experiments and evidence capture across Colab, Kaggle, browser automation, and GPU VMs.
+description: Data Science CV Repro Lab is a public ClawHub CV repro-lab skill. Use it when the user says "cv repro lab", "computer vision reproducibility", "CV experiment evidence", or wants execution-grade CV experiments and evidence capture across Colab, Kaggle, browser automation, and GPU VMs.
+version: 1.9.2
 homepage: https://zack-dev-cm.github.io/
 user-invocable: true
 metadata: {"openclaw":{"homepage":"https://zack-dev-cm.github.io/","skillKey":"data-science-cv-repro-lab","requires":{"anyBins":["python3","python"]}}}
 ---
 
 # Data Science CV Repro Lab
+
+Search intent: `cv repro lab`, `computer vision reproducibility`, `cv experiment evidence`, `colab kaggle cv workflow`
 
 ## Goal
 

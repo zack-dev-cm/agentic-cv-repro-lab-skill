@@ -83,12 +83,8 @@ def render_browser(lines: list[str], browser_lane: dict[str, Any], *, allow_priv
     lines.append("## Browser Lane")
     for key in (
         "tool",
-        "browser_alias",
-        "session_alias",
         "target_url",
-        "target_host",
         "target_kind",
-        "target_label",
         "url_redacted",
         "runtime_type",
         "requested_mode",

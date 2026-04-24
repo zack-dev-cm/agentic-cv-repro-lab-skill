@@ -45,4 +45,6 @@ Source:
 
 ## Practical review step
 
-Use your local audit tooling to scan for absolute paths, localhost URLs, websocket endpoints, tokens, and secret-shaped strings before publishing.
+Run the local release-safety checker before publishing. It should report only
+finding categories for private paths, local endpoints, browser attach endpoints,
+or credential-shaped text; do not print, copy, or store any matching value.
