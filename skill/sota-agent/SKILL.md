@@ -1,7 +1,7 @@
 ---
 name: sota-agent
 description: SOTA Agent is a public ClawHub SOTA-campaign skill for CV and DS work. Use it when the user says "sota agent", "state of the art benchmark scouting", or wants SOTA-focused CV and data-science campaigns across OpenClaw notebooks, GUI-heavy workflows, and GPU VMs.
-version: 1.4.2
+version: 1.4.3
 homepage: https://zack-dev-cm.github.io/
 user-invocable: true
 metadata: {"openclaw":{"homepage":"https://zack-dev-cm.github.io/","skillKey":"sota-agent","requires":{"anyBins":["python3","python"]}}}
