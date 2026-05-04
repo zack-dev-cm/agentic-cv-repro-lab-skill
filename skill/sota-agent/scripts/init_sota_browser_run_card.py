@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a sanitized browser run card skeleton for notebook-style SOTA work."""
+"""Create a sanitized external evidence card skeleton for SOTA review."""
 
 from __future__ import annotations
 
@@ -14,10 +14,10 @@ from sota_public_safety import sanitize_alias, sanitize_url
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", required=True, help="Path to the output JSON file.")
-    parser.add_argument("--target-url", required=True, help="Notebook or browser target URL.")
-    parser.add_argument("--tool", default="openclaw", help="Browser automation tool name.")
-    parser.add_argument("--browser-alias", default="", help="Sanitized browser profile alias.")
-    parser.add_argument("--session-alias", default="", help="Sanitized browser session alias.")
+    parser.add_argument("--target-url", required=True, help="External evidence URL.")
+    parser.add_argument("--tool", default="external", help="Evidence source label.")
+    parser.add_argument("--browser-alias", default="", help="Sanitized source alias.")
+    parser.add_argument("--session-alias", default="", help="Sanitized session alias.")
     parser.add_argument("--requested-mode", default="", help="Requested model or notebook mode.")
     parser.add_argument("--runtime-type", default="", help="Requested runtime type such as T4 or A100.")
     parser.add_argument("--timeout-seconds", type=int, default=0, help="Primary execution timeout.")

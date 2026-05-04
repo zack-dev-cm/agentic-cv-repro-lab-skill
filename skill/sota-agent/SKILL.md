@@ -1,7 +1,7 @@
 ---
 name: sota-agent
-description: SOTA Agent is a public ClawHub SOTA-campaign skill for CV and DS work. Use it when the user says "sota agent", "state of the art benchmark scouting", or wants SOTA-focused CV and data-science campaigns across OpenClaw notebooks, GUI-heavy workflows, and GPU VMs.
-version: 1.4.3
+description: SOTA Agent is a public ClawHub SOTA-campaign skill for CV and DS work. Use it when the user says "sota agent", "state of the art benchmark scouting", or wants benchmark planning, paper triage, ablation design, and claim review for CV or data-science campaigns.
+version: 1.4.4
 homepage: https://zack-dev-cm.github.io/
 user-invocable: true
 metadata: {"openclaw":{"homepage":"https://zack-dev-cm.github.io/","skillKey":"sota-agent","requires":{"anyBins":["python3","python"]}}}
@@ -18,23 +18,23 @@ Turn a vague "beat the benchmark" request into a disciplined campaign:
 - fixed target metric and split
 - explicit literature and leaderboard snapshot
 - bounded reproduction plan
-- explicit browser, notebook, or VM execution lane
-- GUI evidence when notebook or browser state matters
+- explicit handoff to the separate execution lane when runs need external tools
+- evidence requirements that can be reviewed without relying on live session state
 - ablations that answer one question at a time
 - promotion only when the claim survives review
 
 This skill is the frontier-planning and candidate-selection layer.
-For browser evidence, VM execution, and promotion artifacts, pair it with
-`data-science-cv-repro-lab` instead of letting the campaign drift into ad hoc runs.
+For execution artifacts or promotion evidence, pair it with
+`data-science-cv-repro-lab`; this skill stays focused on planning and claim review.
 
 ## Use This Skill When
 
 - the user wants a CV or DS system pushed toward state-of-the-art results
 - the task involves reproducing or surpassing recent papers
 - the workflow needs paper triage, leaderboard tracking, or claim review
-- the workflow includes OpenClaw, Colab, Kaggle, browser-only notebook actions, or GUI-heavy pages
-- the user needs experiment management across browser research, notebooks, local runs, and long GPU jobs
-- the user wants GPU VM or notebook watchdog logic, artifact pulls, or browser evidence for a SOTA candidate
+- the workflow needs a clean handoff to an execution skill after the benchmark contract is frozen
+- the user needs experiment management across local runs, notebooks, and long-running jobs
+- the question is whether execution evidence supports a SOTA candidate
 - the question is whether a candidate is a real SOTA step or only noise, leakage, or benchmark overfitting
 
 If the campaign includes serious execution or release review, use this skill to choose and rank candidates,
@@ -54,10 +54,10 @@ then use `data-science-cv-repro-lab` as the execution lane.
    - Use `python3 {baseDir}/scripts/init_sota_program.py --out <json> --campaign-id <id> --task <task> --dataset <dataset> --metric <metric> --split <split>` when you need one machine-readable benchmark, rerun, delegation, and auth plan.
    - Use `python3 {baseDir}/scripts/init_sota_candidate_card.py --out <json> --candidate-id <id> --campaign-id <id> --objective <goal>`.
    - If execution review depends on synced QA runs, runtime sweeps, or benchmark panels, store the paired `data-science-cv-repro-lab` review dashboard path in the program and candidate records before the claim review starts.
-   - If the execution path depends on a real browser or notebook UI, use `python3 {baseDir}/scripts/init_sota_browser_run_card.py --out <json> --target-url <url>`.
-   - If the browser or notebook surface needs manual or visual QA, use `python3 {baseDir}/scripts/init_sota_validation_scorecard.py --out <json> --scorecard-id <id> --surface <surface>`.
-   - If a Colab, Kaggle, or notebook export bundle matters, use `python3 {baseDir}/scripts/init_sota_artifact_manifest.py --out <json> --bundle-root <dir>`.
-   - If a long GPU VM run is involved, use `python3 {baseDir}/scripts/init_sota_vm_bootstrap_manifest.py --out <json> --output-root <run_root> --model-family <name> --command python train.py --epochs 40`.
+   - If external execution evidence exists, record the reviewed artifact manifest path in the program and candidate records instead of acting through a live session.
+   - If the review surface needs manual or visual QA, use `python3 {baseDir}/scripts/init_sota_validation_scorecard.py --out <json> --scorecard-id <id> --surface <surface>`.
+   - If an external export bundle matters, use `python3 {baseDir}/scripts/init_sota_artifact_manifest.py --out <json> --bundle-root <dir>`.
+   - If a long execution run is involved, record only sanitized summaries and artifact references in the SOTA campaign files.
 
 3. Separate the campaign roles even if one agent performs all of them.
    - Scout: papers, leaderboards, repos, and benchmark rules.
@@ -70,9 +70,7 @@ then use `data-science-cv-repro-lab` as the execution lane.
    - For repeated audits, batch over a manifest or CSV instead of free-form context accumulation.
 
 4. Pick the execution lane explicitly.
-   - Browser or GUI lane: OpenClaw, Colab, Kaggle, or another real browser session when notebook UI state matters.
-   - Colab or notebook GPU lane: runtime selection, smoke validation, artifact export, and browser evidence.
-   - GPU VM lane: long runs with heartbeats, watchdogs, sync, and auto-stop policy.
+   - Execution handoff lane: use `data-science-cv-repro-lab` for external runs and artifact capture.
    - Local lane: cheap falsification, tiny reruns, and artifact review.
 
 5. Keep file writes inside one campaign workspace.
@@ -134,36 +132,17 @@ then use `data-science-cv-repro-lab` as the execution lane.
 - Record training cost, wall time, and hardware for every serious candidate.
 - Cut branches that cannot plausibly clear the target with the remaining budget.
 
-### OAuth and auth rules
+### Runtime and auth rules
 
-- Use ChatGPT or Codex OAuth-backed sessions as the default and preferred path.
-- Prefer Codex multi-agent or app-server workflows over orchestrators that require paid API keys.
+- This public skill does not require API keys, account tokens, live sessions, or account-bound credentials.
+- Prefer local files, public URLs, and user-supplied artifacts over account-bound execution paths.
 - Do not require or recommend `OPENAI_API_KEY`, other vendor API keys, or paid inference APIs as the default campaign runtime path.
-- If a third-party framework only works through paid API keys, treat it as reference material unless it can run fully through local tools and OAuth-backed Codex sessions.
+- If a third-party framework only works through paid API keys, treat it as reference material unless it can run through local tools or public artifacts.
 
-### OpenClaw browser rules
+### External execution rules
 
-- Use OpenClaw for public papers, leaderboards, docs, notebook-only steps, and GUI-heavy flows when the browser lane adds evidence.
-- Prefer direct public URLs over uploads or private sessions.
-- Capture leaderboard, notebook, or GUI evidence as notes, screenshots, and exact URLs when they are part of the claim path.
-- Fail hard on dead browser attach, missing notebook readiness, or unavailable requested model or runtime mode.
-- Treat screenshots and GUI evidence as supporting artifacts, not the claim itself.
-- Do not use browser-only summaries as the claim itself; claims still require benchmark artifacts.
-
-### Colab and notebook GPU rules
-
-- Select the accelerator explicitly before running expensive cells.
-- Run a smoke cell that proves imports, runtime, data mounts, and export paths all work.
-- Keep one stable export root and pull the artifact manifest plus at least one preview back locally.
-- Add the browser run card and validation scorecard when the notebook GUI is part of the evaluation story.
-
-### GPU VM rules
-
-- Create a named run root before launch.
-- Write a machine-readable VM bootstrap manifest before long runs.
-- Run long jobs under a heartbeat, session, or supervisor so liveness is explicit.
-- Sync metrics, summaries, and checkpoints back to a trusted store on a schedule.
-- Do not promote directly from live VM state; promote from synced artifacts and review evidence.
+- Execution rules live in `data-science-cv-repro-lab`.
+- In this skill, record only the benchmark contract, candidate rationale, review status, and sanitized artifact references.
 
 ### Claim safety rules
 
@@ -182,18 +161,18 @@ Read only the reference that matches the task:
   - Full campaign structure, role separation, and stop conditions.
 - `references/sota-program-rules.md`
   - Rules for queues, stage discipline, ablations, and promotion gating.
-- `references/campaign-harness-and-oauth-stack.md`
-  - What to reuse from Codex subagents, harness engineering, OpenEvolve, Symphony, Paperclip, and OptiLLM under an OAuth-only campaign rule.
+- `references/campaign-harness-stack.md`
+  - What to reuse from Codex subagents, harness engineering, OpenEvolve, Symphony, Paperclip, and OptiLLM under a local-first campaign rule.
 - `references/benchmark-discipline.md`
   - How to avoid contamination, metric drift, and invalid comparisons.
 - `references/paper-triage.md`
   - How to filter papers and extract only decision-relevant details.
-- `references/openclaw-research-lane.md`
-  - How to use OpenClaw productively for public literature and leaderboard work.
-- `references/openclaw-browser-lane.md`
-  - How to run GUI-heavy notebook, browser, and screenshot-based execution safely.
-- `references/colab-vm-operations.md`
-  - How to manage Colab, Kaggle, and GPU VM execution lanes with smoke tests and artifact discipline.
+- `references/public-research-lane.md`
+  - How to review public literature and leaderboard pages without private sessions.
+- `references/external-evidence-handoff.md`
+  - How to record sanitized evidence from external notebook or UI runs without controlling a live session.
+- `references/execution-evidence-summary.md`
+  - How to summarize execution evidence that belongs in the paired execution skill.
 - `references/claim-safety.md`
   - Review rules for whether a candidate deserves a SOTA claim at all.
 - `references/public-safety.md`
@@ -206,17 +185,17 @@ Read only the reference that matches the task:
 - `scripts/init_sota_campaign.py`
   - Create a reusable campaign folder with benchmark, program, agent, research, leaderboard, plan, ablation, evidence, and claim files.
 - `scripts/init_sota_program.py`
-  - Create a machine-readable program record with the fixed benchmark, baselines, rerun policy, bounded subagent roles, and OAuth rules.
+  - Create a machine-readable program record with the fixed benchmark, baselines, rerun policy, bounded subagent roles, and local-first runtime rules.
 - `scripts/init_sota_leaderboard_snapshot.py`
   - Create a machine-readable snapshot of the target benchmark contract and current reference scores.
 - `scripts/init_sota_paper_triage.py`
   - Create a machine-readable literature queue for paper screening and extraction.
 - `scripts/init_sota_browser_run_card.py`
-  - Create a sanitized browser evidence record for OpenClaw, Colab, Kaggle, or other notebook UI runs.
+  - Create a sanitized external-evidence record for notebook or UI run artifacts.
 - `scripts/init_sota_validation_scorecard.py`
   - Create a machine-readable GUI or notebook validation scorecard when visible state matters to the campaign.
 - `scripts/init_sota_artifact_manifest.py`
-  - Create a machine-readable export-bundle manifest for notebook or VM artifact pulls with redacted public path metadata.
+  - Create a machine-readable export-bundle manifest for external artifacts with redacted public path metadata.
 - `scripts/init_sota_candidate_card.py`
   - Create a machine-readable card for a serious candidate, its execution lane, auth mode, and claim state.
 - `scripts/init_sota_candidate.py`
@@ -224,7 +203,7 @@ Read only the reference that matches the task:
 - `scripts/init_sota_ablation_queue.py`
   - Create a focused ablation queue for one candidate family.
 - `scripts/init_sota_vm_bootstrap_manifest.py`
-  - Create a machine-readable bootstrap manifest for long GPU VM or cluster runs with public-release redaction.
+  - Create a redacted long-run summary manifest for already-approved execution artifacts.
 - `scripts/update_sota_scoreboard.py`
   - Refresh a ranked scoreboard for a fixed metric and goal direction.
 - `scripts/init_sota_review_packet.py`

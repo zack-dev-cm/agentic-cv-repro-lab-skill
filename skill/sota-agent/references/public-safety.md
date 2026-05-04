@@ -8,7 +8,7 @@ Use this reference before sharing or publishing SOTA-agent artifacts.
 - private datasets, hidden benchmark ids, or customer names
 - internal experiment URLs
 - raw notebook links
-- raw CDP URLs, websocket endpoints, or browser profile names
+- local debug endpoints or private session aliases
 - absolute local filesystem paths
 - private model registry locations
 - unpublished paper PDFs or copyrighted attachments you do not have the right to redistribute

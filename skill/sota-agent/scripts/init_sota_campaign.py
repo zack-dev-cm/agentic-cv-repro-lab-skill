@@ -52,9 +52,9 @@ def main() -> int:
 - what qualifies as "beat"
 - what blocks a SOTA claim
 
-## Auth Contract
+## Runtime Contract
 
-- ChatGPT or Codex OAuth-backed sessions
+- local helpers and public artifacts
 - no paid API keys by default
 
 ## Agent Roles
@@ -101,9 +101,9 @@ def main() -> int:
 - reproducer: baseline and reference inspection
 - reviewer: contamination, regressions, and evidence completeness
 
-## Auth Rule
+## Runtime Rule
 
-- prefer ChatGPT or Codex OAuth-backed sessions
+- prefer local helpers and user-supplied artifacts
 - treat paid API-key frameworks as reference-only by default
 """,
         "research.md": """# Research

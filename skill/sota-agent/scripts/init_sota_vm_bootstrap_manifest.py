@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a machine-readable bootstrap manifest for a long SOTA VM run."""
+"""Create a machine-readable redacted manifest for a long external SOTA run."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def parse_key_value(items: list[str]) -> dict[str, str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", required=True, help="Path to the output JSON file.")
-    parser.add_argument("--output-root", required=True, help="Run output root on the VM or shared storage.")
+    parser.add_argument("--output-root", required=True, help="Run output root or shared storage path.")
     parser.add_argument("--model-family", required=True, help="Model family or trainer name.")
     parser.add_argument("--dataset-id", default="", help="Logical dataset identifier.")
     parser.add_argument("--dataset-manifest", default="", help="Dataset manifest path or id.")

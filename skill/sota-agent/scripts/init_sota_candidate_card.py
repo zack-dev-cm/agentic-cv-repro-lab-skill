@@ -35,7 +35,7 @@ def main() -> int:
         },
         "execution": {
             "lane": "",
-            "auth_mode": "chatgpt_or_codex_oauth",
+            "auth_mode": "local_or_artifact_only",
             "compute_budget": "",
             "wall_time_budget": "",
             "critical_ablation_question": "",

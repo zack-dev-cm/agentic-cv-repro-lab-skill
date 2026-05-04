@@ -1,7 +1,7 @@
-# Campaign Harness And OAuth Stack
+# Campaign Harness Stack
 
 Use this reference when a SOTA campaign needs stronger orchestration, bounded subagents, and an
-explicit OAuth-only runtime policy.
+explicit local-first runtime policy.
 
 ## Why SOTA Work Underperforms
 
@@ -12,7 +12,7 @@ A SOTA campaign underperforms when it has:
 - no bounded subagent decomposition
 - no campaign harness for accepting or rejecting candidates
 - no rerun discipline for small deltas
-- no auth policy, so the workflow drifts toward paid API-key dependencies
+- no runtime policy, so the workflow drifts toward paid API-key dependencies
 
 That failure mode produces a lot of notes and not enough real wins.
 
@@ -109,35 +109,36 @@ Selective reuse only:
 - best-of-n or candidate selection ideas
 - self-consistency or reasoning-time compute for analysis and review
 
-Do not make an API-key-based proxy a required campaign dependency under an OAuth-only policy.
+Do not make an API-key-based proxy a required campaign dependency under a local-first policy.
 
 Source:
 - https://github.com/algorithmicsuperintelligence/optillm
 
-## OAuth-Only Campaign Rule
+## Local-First Campaign Rule
 
 Default allowed paths:
 
-- ChatGPT OAuth-backed sessions
-- Codex OAuth-backed sessions
-- Codex app-server workflows backed by local auth state
-- local Python, shell, notebook, and browser tooling
+- local Python helpers
+- public papers, public repositories, and public leaderboard pages
+- user-supplied result artifacts and run summaries
+- repo-local tests and review scripts that the user explicitly asks to run
 
 Default forbidden requirements:
 
 - `OPENAI_API_KEY`
 - provider-specific paid API keys
-- "buy API access first" as a prerequisite for the SOTA workflow
+- account-bound live sessions as a requirement for this planning skill
+- "buy API access first" as a prerequisite for the SOTA planning workflow
 
-If a framework cannot run in a local ChatGPT or Codex-authenticated workflow, keep the idea and
-drop the dependency.
+If a framework cannot run from public artifacts or local tools, keep the idea and drop the
+dependency from the SOTA planning package.
 
 ## Recommended Composition
 
 For serious benchmark pushes:
 
 - `sota-agent` owns the benchmark contract, literature triage, candidate ranking, and claim review
-- `data-science-cv-repro-lab` owns browser lanes, VM lanes, artifact capture, and promotion evidence
+- `data-science-cv-repro-lab` owns notebooks, external execution, artifact capture, and promotion evidence
 - the campaign harness owns whether a candidate is real, noisy, or cut
 
 That split prevents "frontier theater" where a campaign sounds advanced but still lacks a valid win.

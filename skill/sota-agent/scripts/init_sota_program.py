@@ -95,11 +95,11 @@ def main() -> int:
             "subagent_roles": args.subagent_role or ["scout", "reproducer", "reviewer"],
             "notes": "",
         },
-        "oauth_policy": {
-            "allowed_auth": [
-                "chatgpt_oauth",
-                "codex_oauth",
-                "codex_app_server_auth_json",
+        "runtime_policy": {
+            "allowed_runtimes": [
+                "local_python",
+                "public_artifacts",
+                "repo_local_tests",
             ],
             "forbidden_env_vars": [
                 "OPENAI_API_KEY",
@@ -108,7 +108,7 @@ def main() -> int:
                 "CEREBRAS_API_KEY",
                 "AZURE_OPENAI_API_KEY",
             ],
-            "notes": "Treat third-party frameworks that require paid API keys as reference-only unless they can run through local tools and OAuth-backed Codex sessions.",
+            "notes": "Treat third-party frameworks that require paid API keys as reference-only unless they can run through local tools or public artifacts.",
         },
         "queues": {
             "research_backlog": [],

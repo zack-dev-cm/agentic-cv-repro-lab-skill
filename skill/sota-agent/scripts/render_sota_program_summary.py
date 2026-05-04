@@ -93,19 +93,19 @@ def main() -> int:
         lines.append("")
 
     agents = program.get("agents") or {}
-    oauth_policy = program.get("oauth_policy") or {}
+    runtime_policy = program.get("runtime_policy") or {}
     rerun_policy = program.get("rerun_policy") or {}
-    if agents or oauth_policy or rerun_policy:
+    if agents or runtime_policy or rerun_policy:
         lines.append("## Governance")
         add_field(lines, "main_thread_role", agents.get("main_thread_role"))
         for role in agents.get("subagent_roles") or []:
             add_field(lines, "subagent_role", role)
         add_field(lines, "agent_notes", agents.get("notes"))
-        for auth in oauth_policy.get("allowed_auth") or []:
-            add_field(lines, "allowed_auth", auth)
-        for env_var in oauth_policy.get("forbidden_env_vars") or []:
+        for runtime in runtime_policy.get("allowed_runtimes") or runtime_policy.get("allowed_auth") or []:
+            add_field(lines, "allowed_runtime", runtime)
+        for env_var in runtime_policy.get("forbidden_env_vars") or []:
             add_field(lines, "forbidden_env_var", env_var)
-        add_field(lines, "oauth_notes", oauth_policy.get("notes"))
+        add_field(lines, "runtime_notes", runtime_policy.get("notes"))
         add_field(lines, "small_delta_threshold", rerun_policy.get("small_delta_threshold"))
         add_field(lines, "minimum_reruns", rerun_policy.get("minimum_reruns"))
         add_field(lines, "seed_strategy", rerun_policy.get("seed_strategy"))

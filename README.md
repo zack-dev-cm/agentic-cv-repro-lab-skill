@@ -45,7 +45,7 @@ rsync -a skill/sota-agent/ "$CODEX_HOME/skills/sota-agent/"
 ## Live Packages
 
 - [CV Repro Lab on ClawHub](https://clawhub.ai/zack-dev-cm/data-science-cv-repro-lab) (`v1.9.1`)
-- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.4.1`)
+- [SOTA Agent on ClawHub](https://clawhub.ai/zack-dev-cm/sota-agent) (`v1.4.4`)
 - [Portfolio entry](https://zack-dev-cm.github.io/projects/cv-repro-lab-skills.md)
 
 ## What Changed In This Release
@@ -55,7 +55,7 @@ rsync -a skill/sota-agent/ "$CODEX_HOME/skills/sota-agent/"
 - expanded run cards and candidate/program records with reruns, slices, agent threads, and auth policy
 - added explicit dashboard, source-audit, and leakage-audit references to the SOTA claim surface
 - added redacted public summary rendering for the richer machine-readable records
-- made OAuth-backed ChatGPT/Codex paths the default public story instead of API-key-first tooling
+- made local-first planning and public artifact review the default public story instead of API-key-first tooling
 
 ## Good Public Fit
 
